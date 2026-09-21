@@ -1,7 +1,9 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, CheckCircle2, MessageCircle, Sparkles, Star } from 'lucide-react';
+import { ArrowRight, CheckCircle2, Sparkles, Star } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
+import { safeCtaUrl } from '../../utils/urls';
+import { WhatsAppIcon } from '../common/WhatsAppIcon';
 
 export const Hero: React.FC = () => {
   const { homepageConfig, settings } = useStore();
@@ -12,7 +14,7 @@ export const Hero: React.FC = () => {
   )}`;
 
   return (
-    <section className="relative overflow-hidden bg-[#FDFBF9] py-8 sm:py-14 lg:py-20 border-b border-[#F0E6E1]">
+    <section className="premium-hero relative overflow-hidden py-8 sm:py-14 lg:py-20 border-b border-[#F0E6E1]">
       {/* Subtle organic background aura */}
       <div className="absolute top-0 right-0 -mr-20 -mt-20 w-80 sm:w-96 h-80 sm:h-96 rounded-full bg-[#FCE7F3]/40 blur-3xl pointer-events-none" />
       <div className="absolute bottom-0 left-0 -ml-20 -mb-20 w-80 sm:w-96 h-80 sm:h-96 rounded-full bg-[#FEF3C7]/30 blur-3xl pointer-events-none" />
@@ -20,11 +22,11 @@ export const Hero: React.FC = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-8 items-center">
           {/* Left Text Column */}
-          <div className="lg:col-span-7 space-y-4 sm:space-y-6 text-center lg:text-left">
+          <div className="premium-reveal lg:col-span-7 space-y-4 sm:space-y-6 text-center lg:text-left">
             {/* Sector 76 Local Badge */}
             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-[#FCE7F3] text-[#831843] text-[11px] sm:text-xs font-bold tracking-wide uppercase shadow-sm">
               <Sparkles className="w-3.5 h-3.5 fill-[#831843]" />
-              <span>Florist &amp; Bakery • Sector 76, Noida</span>
+              <span>Florist &amp; Bakery • Sector 76, Noida • 100% Pure Veg</span>
             </div>
 
             {/* Headline */}
@@ -41,7 +43,7 @@ export const Hero: React.FC = () => {
             {/* Action Buttons: Primary CTA & Secondary WhatsApp CTA */}
             <div className="pt-2 flex flex-col sm:flex-row items-center justify-center lg:justify-start gap-3 sm:gap-4">
               <Link
-                to={homepageConfig.heroCtaLink || '/shop'}
+                to={safeCtaUrl(homepageConfig.heroCtaLink)}
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 sm:px-8 py-3.5 sm:py-4 rounded-full bg-[#831843] hover:bg-[#6b1336] text-white font-bold text-sm sm:text-base shadow-lg shadow-[#831843]/20 active:scale-95 transition-all"
               >
                 <span>{homepageConfig.heroCtaText || 'Shop Now'}</span>
@@ -54,13 +56,13 @@ export const Hero: React.FC = () => {
                 rel="noopener noreferrer"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-3.5 sm:py-4 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm sm:text-base shadow-md active:scale-95 transition-all"
               >
-                <MessageCircle className="w-4 h-4 sm:w-5 sm:h-5 fill-white" />
+                <WhatsAppIcon className="w-4 h-4 sm:w-5 sm:h-5" />
                 <span>Order on WhatsApp</span>
               </a>
             </div>
 
             {/* Highlights Bar */}
-            <div className="pt-4 sm:pt-6 grid grid-cols-3 gap-2 max-w-lg mx-auto lg:mx-0 text-left border-t border-[#EADBDA]/80">
+            <div className="pt-4 sm:pt-6 grid grid-cols-2 sm:grid-cols-4 gap-2 max-w-lg mx-auto lg:mx-0 text-left border-t border-[#EADBDA]/80">
               <div className="flex items-center gap-1.5 sm:gap-2">
                 <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#831843] shrink-0" />
                 <span className="text-xs sm:text-sm font-semibold text-gray-800">Fresh Daily</span>
@@ -73,14 +75,18 @@ export const Hero: React.FC = () => {
                 <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-[#831843] shrink-0" />
                 <span className="text-xs sm:text-sm font-semibold text-gray-800">Local Pickup</span>
               </div>
+              <div className="flex items-center gap-1.5 sm:gap-2">
+                <CheckCircle2 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-emerald-700 shrink-0" />
+                <span className="text-xs sm:text-sm font-semibold text-gray-800">100% Pure Veg</span>
+              </div>
             </div>
           </div>
 
           {/* Right Visual Column (Hero Image with Organic Badge & Customer Rating) */}
-          <div className="lg:col-span-5 relative mt-4 lg:mt-0">
+          <div className="premium-reveal lg:col-span-5 relative mt-4 lg:mt-0">
             <div className="relative mx-auto max-w-sm sm:max-w-md lg:max-w-none">
               {/* Decorative Frame with Optimized Aspect Ratio */}
-              <div className="relative rounded-3xl overflow-hidden shadow-2xl border-4 border-white aspect-[4/3] sm:aspect-[4/5] bg-gray-100">
+              <div className="premium-image-frame relative rounded-3xl overflow-hidden border-4 border-white aspect-[4/3] sm:aspect-[4/5] bg-gray-100">
                 <img
                   src={
                     homepageConfig.heroImage ||

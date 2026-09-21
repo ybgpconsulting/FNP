@@ -6,15 +6,15 @@ import {
   Facebook,
   Heart,
   Instagram,
-  Lock,
   Mail,
   MapPin,
-  MessageCircle,
   Phone,
   Store,
   Twitter,
 } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
+import { safeExternalUrl } from '../../utils/urls';
+import { WhatsAppIcon } from './WhatsAppIcon';
 
 export const Footer: React.FC = () => {
   const { settings, categories } = useStore();
@@ -26,9 +26,9 @@ export const Footer: React.FC = () => {
   )}`;
 
   return (
-    <footer className="bg-[#1C1618] text-[#D8C7C5] pt-16 pb-24 sm:pb-16 border-t border-[#312527]">
+    <footer className="premium-footer bg-[#1C1618] text-[#D8C7C5] pt-10 pb-24 sm:pb-10 border-t border-[#312527]">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 lg:gap-8 mb-12">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-8 lg:gap-8 mb-8">
           {/* Brand & Overview (Col 1 & 2) */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
@@ -46,15 +46,13 @@ export const Footer: React.FC = () => {
             </div>
 
             <p className="text-sm text-[#A89897] leading-relaxed max-w-sm pt-1">
-              Your premier neighborhood destination for freshly baked artisanal celebration cakes,
-              handcrafted fresh flower bouquets, indoor air-purifying plants, and luxury gift hampers.
-              Crafted fresh daily with doorstep delivery across Noida.
+              Fresh cakes, flowers, plants and gifts from our 100% pure veg store in Sector 76, Noida.
             </p>
 
             <div className="pt-2 flex items-center gap-3">
               {settings.instagramUrl && (
                 <a
-                  href={settings.instagramUrl}
+                  href={safeExternalUrl(settings.instagramUrl)}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Follow us on Instagram"
@@ -65,7 +63,7 @@ export const Footer: React.FC = () => {
               )}
               {settings.facebookUrl && (
                 <a
-                  href={settings.facebookUrl}
+                  href={safeExternalUrl(settings.facebookUrl)}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Follow us on Facebook"
@@ -76,7 +74,7 @@ export const Footer: React.FC = () => {
               )}
               {settings.twitterUrl && (
                 <a
-                  href={settings.twitterUrl}
+                  href={safeExternalUrl(settings.twitterUrl)}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label="Follow us on Twitter/X"
@@ -92,7 +90,7 @@ export const Footer: React.FC = () => {
                 aria-label="Chat on WhatsApp"
                 className="w-9 h-9 rounded-full bg-[#25D366] text-white flex items-center justify-center hover:opacity-90 transition-opacity"
               >
-                <MessageCircle className="w-4 h-4 fill-white" />
+                <WhatsAppIcon className="w-4 h-4" />
               </a>
             </div>
           </div>
@@ -160,7 +158,7 @@ export const Footer: React.FC = () => {
               </div>
 
               <div className="flex items-center gap-2">
-                <MessageCircle className="w-4 h-4 text-[#25D366] shrink-0" />
+                <WhatsAppIcon className="w-4 h-4 shrink-0" />
                 <a
                   href={whatsappUrl}
                   target="_blank"
@@ -178,7 +176,7 @@ export const Footer: React.FC = () => {
 
               <div className="pt-1">
                 <a
-                  href={settings.mapsUrl}
+                  href={safeExternalUrl(settings.mapsUrl)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 text-xs text-[#FBCFE8] hover:underline"
@@ -187,21 +185,27 @@ export const Footer: React.FC = () => {
                   <ExternalLink className="w-3 h-3" />
                 </a>
               </div>
+
+              {(settings.zomatoUrl || settings.swiggyUrl || settings.magicpinUrl) && (
+                <div className="pt-3 border-t border-[#312527] space-y-2">
+                  <p className="text-[10px] uppercase tracking-widest text-[#E8A598] font-bold">Order on delivery apps</p>
+                  <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs">
+                    {settings.zomatoUrl && <a href={safeExternalUrl(settings.zomatoUrl)} target="_blank" rel="noopener noreferrer" className="text-[#FBCFE8] hover:text-white hover:underline">Zomato</a>}
+                    {settings.swiggyUrl && <a href={safeExternalUrl(settings.swiggyUrl)} target="_blank" rel="noopener noreferrer" className="text-[#FBCFE8] hover:text-white hover:underline">Swiggy</a>}
+                    {settings.magicpinUrl && <a href={safeExternalUrl(settings.magicpinUrl)} target="_blank" rel="noopener noreferrer" className="text-[#FBCFE8] hover:text-white hover:underline">Magicpin</a>}
+                  </div>
+                </div>
+              )}
             </div>
           </div>
         </div>
 
         {/* Bottom Sub-bar */}
-        <div className="pt-8 mt-8 border-t border-[#312527] flex flex-col sm:flex-row items-center justify-between text-xs text-[#8A797A] gap-4">
+        <div className="pt-5 mt-5 border-t border-[#312527] flex flex-col sm:flex-row items-center justify-between text-xs text-[#8A797A] gap-3">
           <p>© {currentYear} FNP Florist &amp; Bakery. All rights reserved. Sector 76, Noida, UP 201301.</p>
           <div className="flex items-center gap-4">
             <span className="text-gray-600">•</span>
             <span>Easy WhatsApp Ordering</span>
-            <span className="text-gray-600">•</span>
-            <Link to="/admin" className="hover:text-white inline-flex items-center gap-1 transition-colors">
-              <Lock className="w-3 h-3" />
-              <span>Admin Portal</span>
-            </Link>
           </div>
         </div>
       </div>

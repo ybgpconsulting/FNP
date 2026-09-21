@@ -15,6 +15,7 @@ import {
   INITIAL_HOMEPAGE_CONFIG,
   INITIAL_PRODUCTS,
   INITIAL_SETTINGS,
+  STORE_MAPS_URL,
 } from '../data/initialData';
 import { Category, HomepageConfig, Product, RecordedOrder, StoreSettings } from '../types';
 import { auth, db, isFirebaseConfigured } from './config';
@@ -59,6 +60,24 @@ const LS_PRODUCTS_KEY = 'fnp_noida76_products_v1';
 const LS_CATEGORIES_KEY = 'fnp_noida76_categories_v1';
 const LS_SETTINGS_KEY = 'fnp_noida76_settings_v1';
 const LS_HOMEPAGE_KEY = 'fnp_noida76_homepage_v1';
+const LEGACY_STORE_MAPS_URL = 'https://maps.google.com/?q=Amrapali+Crystal+Home+Sector+76+Noida+201301';
+
+function normalizeStoreSettings(settings: StoreSettings): StoreSettings {
+  return settings.mapsUrl === LEGACY_STORE_MAPS_URL
+    ? { ...settings, mapsUrl: STORE_MAPS_URL }
+    : settings;
+}
+
+function readLocalJson<T>(key: string, fallback: T): T {
+  const raw = localStorage.getItem(key);
+  if (!raw) return fallback;
+  try {
+    return JSON.parse(raw) as T;
+  } catch {
+    localStorage.removeItem(key);
+    return fallback;
+  }
+}
 
 // Seed initial data into localStorage if empty
 function initLocalStorage() {
@@ -79,23 +98,10 @@ initLocalStorage();
 
 // ===================== PRODUCTS =====================
 
-export function sanitizeProductEggless(prod: Product): Product {
-  if (prod.flavorOptions && prod.flavorOptions.length > 0) {
-    const cleaned = prod.flavorOptions
-      .filter((opt) => !opt.toLowerCase().includes('with egg') && opt.toLowerCase() !== 'regular')
-      .map((opt) => (opt.toLowerCase().includes('eggless') ? '100% Eggless' : opt));
-    return {
-      ...prod,
-      flavorOptions: cleaned.length > 0 ? cleaned : ['100% Eggless'],
-    };
-  }
-  if (prod.categoryId === 'cat-cakes') {
-    return {
-      ...prod,
-      flavorOptions: ['100% Eggless'],
-    };
-  }
-  return prod;
+export function normalizeProduct(prod: Product): Product {
+  const legacyProduct = prod as Product & { flavorOptions?: string[]; selectedFlavor?: string };
+  const { flavorOptions: _flavorOptions, selectedFlavor: _selectedFlavor, ...normalizedProduct } = legacyProduct;
+  return normalizedProduct;
 }
 
 export async function fetchProducts(): Promise<Product[]> {
@@ -106,18 +112,17 @@ export async function fetchProducts(): Promise<Product[]> {
       if (snapshot.empty) {
         // First-time seed into live Firestore
         await seedFirestoreIfEmpty();
-        return INITIAL_PRODUCTS.map(sanitizeProductEggless);
+        return INITIAL_PRODUCTS.map(normalizeProduct);
       }
-      return snapshot.docs.map((d) => sanitizeProductEggless({ id: d.id, ...(d.data() as Omit<Product, 'id'>) }));
+      return snapshot.docs.map((d) => normalizeProduct({ id: d.id, ...(d.data() as Omit<Product, 'id'>) }));
     } catch (err) {
       console.warn('Firestore fetchProducts fallback to local data:', err);
       // Fallback
     }
   }
 
-  const raw = localStorage.getItem(LS_PRODUCTS_KEY);
-  const list: Product[] = raw ? JSON.parse(raw) : INITIAL_PRODUCTS;
-  return list.map(sanitizeProductEggless);
+  const list = readLocalJson<Product[]>(LS_PRODUCTS_KEY, INITIAL_PRODUCTS);
+  return list.map(normalizeProduct);
 }
 
 export async function fetchProductBySlug(slug: string): Promise<Product | null> {
@@ -127,7 +132,7 @@ export async function fetchProductBySlug(slug: string): Promise<Product | null> 
       const snapshot = await getDocs(q);
       if (!snapshot.empty) {
         const docSnap = snapshot.docs[0];
-        return sanitizeProductEggless({ id: docSnap.id, ...(docSnap.data() as Omit<Product, 'id'>) });
+        return normalizeProduct({ id: docSnap.id, ...(docSnap.data() as Omit<Product, 'id'>) });
       }
     } catch (err) {
       console.warn('Firestore fetchProductBySlug error, using fallback:', err);
@@ -196,8 +201,7 @@ export async function fetchCategories(): Promise<Category[]> {
     }
   }
 
-  const raw = localStorage.getItem(LS_CATEGORIES_KEY);
-  return raw ? JSON.parse(raw) : INITIAL_CATEGORIES;
+  return readLocalJson<Category[]>(LS_CATEGORIES_KEY, INITIAL_CATEGORIES);
 }
 
 export async function saveCategory(category: Category): Promise<void> {
@@ -242,15 +246,14 @@ export async function fetchStoreSettings(): Promise<StoreSettings> {
       const docRef = doc(db, 'settings', 'store');
       const docSnap = await getDoc(docRef);
       if (docSnap.exists()) {
-        return docSnap.data() as StoreSettings;
+        return normalizeStoreSettings(docSnap.data() as StoreSettings);
       }
     } catch (err) {
       console.warn('Firestore fetchStoreSettings fallback:', err);
     }
   }
 
-  const raw = localStorage.getItem(LS_SETTINGS_KEY);
-  return raw ? JSON.parse(raw) : INITIAL_SETTINGS;
+  return normalizeStoreSettings(readLocalJson<StoreSettings>(LS_SETTINGS_KEY, INITIAL_SETTINGS));
 }
 
 export async function saveStoreSettings(settings: StoreSettings): Promise<void> {
@@ -280,8 +283,7 @@ export async function fetchHomepageConfig(): Promise<HomepageConfig> {
     }
   }
 
-  const raw = localStorage.getItem(LS_HOMEPAGE_KEY);
-  return raw ? JSON.parse(raw) : INITIAL_HOMEPAGE_CONFIG;
+  return readLocalJson<HomepageConfig>(LS_HOMEPAGE_KEY, INITIAL_HOMEPAGE_CONFIG);
 }
 
 export async function saveHomepageConfig(config: HomepageConfig): Promise<void> {

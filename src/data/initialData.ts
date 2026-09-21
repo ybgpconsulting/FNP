@@ -1,15 +1,20 @@
 import { Category, HomepageConfig, Product, StoreSettings } from '../types';
 
+export const STORE_MAPS_URL = 'https://maps.app.goo.gl/L3ho27w9k3hGw7pL8';
+
 export const INITIAL_SETTINGS: StoreSettings = {
   businessName: 'FNP - Florist & Bakery in Noida Sector 76',
   phone: '+91 9999517599',
   whatsappNumber: '919999517599',
   email: 'orders@fnpnoida76.com',
   address: 'Shop No. 29, Ground Floor, Amrapali Crystal Home, Shopping Arcade, near Mithaas, Amrapali Silicon City, Sector 76, Noida, Uttar Pradesh 201301',
-  mapsUrl: 'https://maps.google.com/?q=Amrapali+Crystal+Home+Sector+76+Noida+201301',
+  mapsUrl: STORE_MAPS_URL,
   instagramUrl: 'https://instagram.com/fnp_noida76',
   facebookUrl: 'https://facebook.com/fnpnoida76',
   twitterUrl: 'https://twitter.com/fnpnoida76',
+  zomatoUrl: '',
+  swiggyUrl: '',
+  magicpinUrl: '',
   openingHours: 'Mon - Sun: 09:00 AM - 11:00 PM (Same Day Delivery Available)',
   whatsappMessage: `Hi, I would like to place an order from FNP Florist & Bakery (Sector 76, Noida).
 
@@ -149,7 +154,6 @@ export const INITIAL_PRODUCTS: Product[] = [
     available: true,
     displayOrder: 3,
     weightOptions: ['500g', '1kg', '2kg'],
-    flavorOptions: ['100% Eggless'],
     allowCustomMessage: true,
     customMessagePlaceholder: 'Message on Cake...',
     createdAt: '2026-01-12T10:00:00.000Z',
@@ -173,7 +177,6 @@ export const INITIAL_PRODUCTS: Product[] = [
     available: true,
     displayOrder: 4,
     weightOptions: ['500g', '1kg', '1.5kg'],
-    flavorOptions: ['100% Eggless'],
     allowCustomMessage: true,
     customMessagePlaceholder: 'Your sweet message...',
     createdAt: '2026-01-13T10:00:00.000Z',
@@ -197,7 +200,6 @@ export const INITIAL_PRODUCTS: Product[] = [
     available: true,
     displayOrder: 5,
     weightOptions: ['500g', '1kg'],
-    flavorOptions: ['100% Eggless'],
     allowCustomMessage: true,
     customMessagePlaceholder: 'Cake text...',
     createdAt: '2026-01-14T10:00:00.000Z',

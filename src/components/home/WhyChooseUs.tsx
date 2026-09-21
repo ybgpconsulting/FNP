@@ -1,12 +1,13 @@
 import React from 'react';
-import { Cake, Gift, MapPin, MessageCircle, ShieldCheck, Sparkles, Truck } from 'lucide-react';
+import { Cake, Gift, MapPin, ShieldCheck, Sparkles, Truck } from 'lucide-react';
+import { WhatsAppIcon } from '../common/WhatsAppIcon';
 import { useStore } from '../../context/StoreContext';
 
 const ICON_MAP: Record<string, React.ReactNode> = {
   Cake: <Cake className="w-6 h-6 text-[#831843]" />,
   Gift: <Gift className="w-6 h-6 text-[#831843]" />,
   MapPin: <MapPin className="w-6 h-6 text-[#831843]" />,
-  MessageCircle: <MessageCircle className="w-6 h-6 text-[#25D366]" />,
+  MessageCircle: <WhatsAppIcon className="w-6 h-6" />,
   Truck: <Truck className="w-6 h-6 text-[#831843]" />,
 };
 

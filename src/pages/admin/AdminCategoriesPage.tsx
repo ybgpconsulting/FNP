@@ -193,10 +193,10 @@ export const AdminCategoriesPage: React.FC = () => {
 
       {/* Category Edit/Create Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+        <div role="dialog" aria-modal="true" aria-labelledby="category-modal-title" className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
           <div className="bg-white rounded-3xl max-w-lg w-full p-6 sm:p-8 shadow-2xl border border-gray-100 space-y-4">
             <div className="flex items-center justify-between pb-3 border-b border-gray-100">
-              <h3 className="font-serif text-xl font-bold text-gray-900">
+              <h3 id="category-modal-title" className="font-serif text-xl font-bold text-gray-900">
                 {editingCategory ? 'Edit Category' : 'Create Category'}
               </h3>
               <button onClick={() => setIsModalOpen(false)} className="text-gray-400 hover:text-gray-600">

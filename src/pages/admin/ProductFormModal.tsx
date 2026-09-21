@@ -48,9 +48,6 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
   const [weightOptionsStr, setWeightOptionsStr] = useState(
     product?.weightOptions?.join(', ') || '500g, 1kg, 1.5kg'
   );
-  const [flavorOptionsStr, setFlavorOptionsStr] = useState(
-    product?.flavorOptions?.join(', ') || '100% Eggless'
-  );
   const [allowCustomMessage, setAllowCustomMessage] = useState(
     product?.allowCustomMessage ?? true
   );
@@ -146,13 +143,6 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
         .map((w) => w.trim())
         .filter(Boolean);
 
-      const parsedFlavors = flavorOptionsStr
-        .split(',')
-        .map((f) => f.trim())
-        .filter(Boolean)
-        .filter((f) => !f.toLowerCase().includes('with egg') && f.toLowerCase() !== 'regular')
-        .map((f) => (f.toLowerCase().includes('eggless') ? '100% Eggless' : f));
-
       const updatedProduct: Product = {
         id: product?.id || `prod_${Date.now()}`,
         name: name.trim(),
@@ -168,7 +158,6 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
         featured,
         bestseller,
         weightOptions: parsedWeights.length > 0 ? parsedWeights : undefined,
-        flavorOptions: parsedFlavors.length > 0 ? parsedFlavors : undefined,
         allowCustomMessage,
         customMessagePlaceholder: customMessagePlaceholder.trim() || undefined,
         displayOrder: Number(displayOrder),
@@ -186,11 +175,11 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-      <div className="relative bg-white rounded-3xl max-w-3xl w-full p-6 sm:p-8 shadow-2xl border border-gray-100 my-8 animate-in fade-in zoom-in-95 duration-200">
+    <div role="dialog" aria-modal="true" aria-labelledby="product-form-modal-title" className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-start sm:items-center justify-center p-2 sm:p-4 overflow-y-auto">
+      <div className="relative bg-white rounded-2xl sm:rounded-3xl max-w-3xl w-full max-h-[calc(100dvh-1rem)] sm:max-h-[calc(100dvh-2rem)] overflow-y-auto p-4 sm:p-8 shadow-2xl border border-gray-100 my-2 sm:my-8 animate-in fade-in zoom-in-95 duration-200">
         <div className="flex items-center justify-between pb-4 border-b border-gray-100">
           <div>
-            <h2 className="font-serif text-2xl font-bold text-gray-900">
+            <h2 id="product-form-modal-title" className="font-serif text-2xl font-bold text-gray-900">
               {isEdit ? 'Edit Product' : 'Add New Product'}
             </h2>
             <p className="text-xs text-gray-500">
@@ -421,8 +410,8 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
             </div>
           </div>
 
-          {/* Row 5: Options (Weight & Flavors) */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          {/* Row 5: Options (Weight) */}
+          <div>
             <div>
               <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
                 Weight / Size Options (Comma-separated)
@@ -432,19 +421,6 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
                 placeholder="500g, 1kg, 2kg"
                 value={weightOptionsStr}
                 onChange={(e) => setWeightOptionsStr(e.target.value)}
-                className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:ring-2 focus:ring-[#831843] focus:outline-none"
-              />
-            </div>
-
-            <div>
-              <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
-                Flavor / Type Options (Comma-separated)
-              </label>
-              <input
-                type="text"
-                placeholder="100% Eggless, Sugar-free"
-                value={flavorOptionsStr}
-                onChange={(e) => setFlavorOptionsStr(e.target.value)}
                 className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:ring-2 focus:ring-[#831843] focus:outline-none"
               />
             </div>

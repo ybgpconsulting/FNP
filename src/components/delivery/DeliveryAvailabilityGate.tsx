@@ -142,6 +142,7 @@ export const DeliveryAvailabilityGate: React.FC = () => {
               storeLat={deliverySettings.storeLatitude}
               storeLon={deliverySettings.storeLongitude}
               radiusKm={deliverySettings.radiusKm}
+              deliveryEnabled={deliverySettings.enabled}
               initialLat={verifiedLocation?.latitude}
               initialLon={verifiedLocation?.longitude}
               onConfirmLocation={handleMapConfirm}

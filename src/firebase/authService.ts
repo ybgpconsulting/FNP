@@ -10,6 +10,9 @@ import { AdminUser } from '../types';
 import { auth, db, isFirebaseConfigured } from './config';
 
 const LOCAL_ADMIN_STORAGE_KEY = 'fnp_noida76_admin_user_v1';
+const LOCAL_ADMIN_EMAIL = (import.meta.env.VITE_ADMIN_EMAIL || 'admin@fnpnoida76.com').toLowerCase().trim();
+const LOCAL_ADMIN_PASSWORD = import.meta.env.VITE_LOCAL_ADMIN_PASSWORD || 'admin123';
+const isLocalDevelopmentMode = import.meta.env.DEV && !isFirebaseConfigured();
 
 // Pre-approved admin emails (configured via env or defaults)
 const ADMIN_EMAILS = [
@@ -22,7 +25,7 @@ export async function checkIsAdmin(user: User | null): Promise<boolean> {
   if (!user || !user.email) return false;
 
   const normalizedEmail = user.email.toLowerCase().trim();
-  if (ADMIN_EMAILS.includes(normalizedEmail)) {
+  if (user.emailVerified && ADMIN_EMAILS.includes(normalizedEmail)) {
     return true;
   }
 
@@ -48,6 +51,21 @@ export async function loginAdminWithCredentials(email: string, pass: string): Pr
     throw new Error('Please enter both your administrator email and password.');
   }
 
+  if (isLocalDevelopmentMode) {
+    if (cleanEmail !== LOCAL_ADMIN_EMAIL || pass !== LOCAL_ADMIN_PASSWORD) {
+      throw new Error(`Invalid local admin credentials. Use ${LOCAL_ADMIN_EMAIL} and the configured local password.`);
+    }
+
+    const adminUser: AdminUser = {
+      uid: 'local-admin',
+      email: LOCAL_ADMIN_EMAIL,
+      displayName: 'Local Store Admin',
+      isAdmin: true,
+    };
+    sessionStorage.setItem(LOCAL_ADMIN_STORAGE_KEY, JSON.stringify(adminUser));
+    return adminUser;
+  }
+
   // Enforce Firebase Authentication
   if (isFirebaseConfigured() && auth) {
     try {
@@ -57,6 +75,9 @@ export async function loginAdminWithCredentials(email: string, pass: string): Pr
       if (!isAdmin) {
         await signOut(auth);
         sessionStorage.removeItem(LOCAL_ADMIN_STORAGE_KEY);
+        if (!cred.user.emailVerified) {
+          throw new Error('Please verify your administrator email address before signing in.');
+        }
         throw new Error('Access denied. This account does not have administrator privileges in the store management registry.');
       }
 
@@ -100,6 +121,9 @@ export async function resetAdminPassword(email: string): Promise<void> {
     await sendPasswordResetEmail(auth, email);
     return;
   }
+  if (isLocalDevelopmentMode && email.trim().toLowerCase() === LOCAL_ADMIN_EMAIL) {
+    return;
+  }
   // Simulated success message for demo/offline mode
   console.info('Password reset triggered for:', email);
 }
@@ -137,8 +161,11 @@ export function subscribeToAuthChanges(callback: (user: AdminUser | null) => voi
     });
   }
 
-  // Firebase not configured
-  sessionStorage.removeItem(LOCAL_ADMIN_STORAGE_KEY);
-  callback(null);
+  if (isLocalDevelopmentMode) {
+    callback(getStoredAdminUser());
+  } else {
+    sessionStorage.removeItem(LOCAL_ADMIN_STORAGE_KEY);
+    callback(null);
+  }
   return () => {};
 }

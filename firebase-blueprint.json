@@ -20,7 +20,6 @@
         "available": { "type": "boolean" },
         "displayOrder": { "type": "number" },
         "weightOptions": { "type": "array" },
-        "flavorOptions": { "type": "array" },
         "allowCustomMessage": { "type": "boolean" },
         "createdAt": { "type": "string" },
         "updatedAt": { "type": "string" }
@@ -53,6 +52,9 @@
         "email": { "type": "string", "maxLength": 100 },
         "address": { "type": "string", "maxLength": 300 },
         "mapsUrl": { "type": "string", "maxLength": 500 },
+        "zomatoUrl": { "type": "string", "maxLength": 500 },
+        "swiggyUrl": { "type": "string", "maxLength": 500 },
+        "magicpinUrl": { "type": "string", "maxLength": 500 },
         "openingHours": { "type": "string", "maxLength": 200 }
       },
       "required": ["businessName", "whatsappNumber", "address"]

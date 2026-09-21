@@ -46,7 +46,7 @@ export const PincodeChecker: React.FC<PincodeCheckerProps> = ({
       return;
     }
 
-    const isMatch = allowedPincodes.includes(cleanPin) || cleanPin.startsWith('2013');
+    const isMatch = allowedPincodes.includes(cleanPin);
 
     if (isMatch) {
       setCheckedState({

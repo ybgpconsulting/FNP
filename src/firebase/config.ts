@@ -17,7 +17,6 @@ export const isFirebaseConfigured = (): boolean => {
     apiKey &&
     apiKey !== 'your-firebase-api-key' &&
     projectId &&
-    projectId !== 'fnp-noida-76' &&
     !apiKey.includes('MY_')
   );
 };

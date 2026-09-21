@@ -7,7 +7,6 @@ import {
   ChevronRight,
   Home,
   MapPin,
-  MessageCircle,
   Minus,
   Plus,
   RotateCcw,
@@ -23,6 +22,7 @@ import { useDeliveryAvailability } from '../context/DeliveryContext';
 import { useStore } from '../context/StoreContext';
 import { CustomerDeliveryAddress } from '../types';
 import { formatDistanceKm } from '../utils/distance';
+import { WhatsAppIcon } from '../components/common/WhatsAppIcon';
 
 export const CartPage: React.FC = () => {
   const { cart, removeFromCart, updateQuantity, clearCart, subtotal, totalQuantity, generateWhatsAppOrderUrl } =
@@ -75,6 +75,15 @@ export const CartPage: React.FC = () => {
     }
     if (!customerAddress.streetArea.trim()) {
       errors.streetArea = 'Please enter street or sector area in Noida.';
+    }
+    const cleanPincode = customerAddress.pincode.replace(/\D/g, '');
+    if (!/^\d{6}$/.test(cleanPincode)) {
+      errors.pincode = 'Please enter a valid 6-digit pincode.';
+    } else if (
+      deliverySettings.allowedPincodes?.length &&
+      !deliverySettings.allowedPincodes.includes(cleanPincode)
+    ) {
+      errors.pincode = 'This pincode is outside the configured delivery area.';
     }
 
     setFormErrors(errors);
@@ -190,9 +199,9 @@ export const CartPage: React.FC = () => {
                               Weight: <strong className="text-gray-700">{item.selectedWeight}</strong>
                             </p>
                           )}
-                          {(item.selectedFlavor || item.product.categoryId === 'cat-cakes' || item.product.categorySlug === 'cakes') && (
+                          {(item.product.categoryId === 'cat-cakes' || item.product.categorySlug === 'cakes') && (
                             <p>
-                              Type: <strong className="text-emerald-700">{item.selectedFlavor && !item.selectedFlavor.toLowerCase().includes('egg') ? item.selectedFlavor : '100% Eggless'}</strong>
+                              Type: <strong className="text-emerald-700">100% Eggless</strong>
                             </p>
                           )}
                           {item.customMessage && (
@@ -542,7 +551,7 @@ export const CartPage: React.FC = () => {
                     onClick={handleWhatsAppCheckout}
                     className="w-full py-4 px-6 rounded-2xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-base shadow-lg hover:shadow-xl flex items-center justify-center gap-2.5 transition-all active:scale-95 cursor-pointer"
                   >
-                    <MessageCircle className="w-5 h-5 fill-white" />
+                    <WhatsAppIcon className="w-5 h-5" />
                     <span>Order on WhatsApp</span>
                   </button>
                 )}
@@ -597,7 +606,7 @@ export const CartPage: React.FC = () => {
               onClick={handleWhatsAppCheckout}
               className="flex-1 py-3 px-4 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] active:scale-95 text-white font-bold text-xs shadow-md flex items-center justify-center gap-2 transition-all"
             >
-              <MessageCircle className="w-4 h-4 fill-white" />
+              <WhatsAppIcon className="w-4 h-4" />
               <span>Order on WhatsApp</span>
             </button>
           )}

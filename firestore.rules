@@ -47,9 +47,11 @@ service cloud.firestore {
 
     function isValidDeliverySettings(data) {
       return data.storeLatitude is number &&
+             data.storeLatitude >= -90 && data.storeLatitude <= 90 &&
              data.storeLongitude is number &&
+             data.storeLongitude >= -180 && data.storeLongitude <= 180 &&
              data.radiusKm is number &&
-             data.radiusKm > 0;
+             data.radiusKm > 0 && data.radiusKm <= 100;
     }
 
     function isValidSettings(settingId, data) {

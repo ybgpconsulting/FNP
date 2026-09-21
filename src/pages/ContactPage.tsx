@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
-import { Clock, ExternalLink, Mail, MapPin, MessageCircle, Navigation, Phone, Send, Store } from 'lucide-react';
+import { Clock, ExternalLink, Mail, MapPin, Navigation, Phone, Send, Store } from 'lucide-react';
 import { SEO } from '../components/common/SEO';
 import { useStore } from '../context/StoreContext';
+import { safeExternalUrl } from '../utils/urls';
+import { WhatsAppIcon } from '../components/common/WhatsAppIcon';
 
 export const ContactPage: React.FC = () => {
   const { settings } = useStore();
@@ -13,6 +15,12 @@ export const ContactPage: React.FC = () => {
 
   const cleanPhone = settings.phone.replace(/[^0-9+]/g, '') || '+919999517599';
   const cleanWhatsApp = settings.whatsappNumber.replace(/[^0-9]/g, '') || '919999517599';
+  const whatsappUrl = `https://wa.me/${cleanWhatsApp}`;
+  const deliveryPartners = [
+    { name: 'Zomato', url: settings.zomatoUrl, logo: 'https://cdn.simpleicons.org/zomato/E23744' },
+    { name: 'Swiggy', url: settings.swiggyUrl, logo: 'https://cdn.simpleicons.org/swiggy/FC8019' },
+    { name: 'Magicpin', url: settings.magicpinUrl, logo: 'https://cdn.simpleicons.org/magicpin/EF4F5F' },
+  ].filter((partner) => partner.url && safeExternalUrl(partner.url));
 
   const handleInquirySubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -52,6 +60,21 @@ Please let me know availability and pricing.`;
           </p>
         </div>
 
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 max-w-4xl mx-auto mb-10">
+          <a href={`tel:${cleanPhone}`} className="flex items-center justify-center gap-2 rounded-2xl bg-[#831843] px-4 py-3.5 text-sm font-bold text-white shadow-sm hover:bg-[#6b1336] transition-colors">
+            <Phone className="w-4 h-4" />
+            <span>Call the store</span>
+          </a>
+          <a href={whatsappUrl} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 rounded-2xl bg-[#25D366] px-4 py-3.5 text-sm font-bold text-white shadow-sm hover:bg-[#20bd5a] transition-colors">
+            <WhatsAppIcon className="w-4 h-4" />
+            <span>Chat on WhatsApp</span>
+          </a>
+          <a href={safeExternalUrl(settings.mapsUrl)} target="_blank" rel="noopener noreferrer" className="flex items-center justify-center gap-2 rounded-2xl bg-white border border-[#EADBDA] px-4 py-3.5 text-sm font-bold text-[#831843] shadow-sm hover:bg-[#FDF2F8] transition-colors">
+            <Navigation className="w-4 h-4" />
+            <span>Get directions</span>
+          </a>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 mb-12">
           {/* Left Column: Contact Cards */}
           <div className="lg:col-span-5 space-y-4">
@@ -74,7 +97,7 @@ Please let me know availability and pricing.`;
 
               <div className="pt-2">
                 <a
-                  href={settings.mapsUrl}
+                  href={safeExternalUrl(settings.mapsUrl)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full py-2.5 px-4 rounded-xl bg-[#FAF8F5] hover:bg-gray-100 text-xs font-bold text-gray-800 border border-gray-200 flex items-center justify-center gap-2 transition-colors"
@@ -102,7 +125,7 @@ Please let me know availability and pricing.`;
 
               <div className="flex items-center gap-3 pt-3 border-t border-gray-100">
                 <div className="w-10 h-10 rounded-xl bg-emerald-50 text-[#25D366] flex items-center justify-center shrink-0">
-                  <MessageCircle className="w-5 h-5 fill-[#25D366]" />
+                  <WhatsAppIcon className="w-5 h-5 rounded-full bg-[#25D366] p-1" />
                 </div>
                 <div>
                   <h3 className="font-serif text-base font-bold text-gray-900">WhatsApp Orders &amp; Inquiry</h3>
@@ -128,6 +151,23 @@ Please let me know availability and pricing.`;
                 </div>
               </div>
             </div>
+
+            {deliveryPartners.length > 0 && (
+              <div className="bg-[#FFF8F2] rounded-3xl p-6 border border-[#F0E0D6] space-y-3">
+                <div>
+                  <h3 className="font-serif text-lg font-bold text-gray-900">Order from your preferred app</h3>
+                  <p className="text-xs text-gray-600 mt-1">Choose a delivery partner and order directly from their store page.</p>
+                </div>
+                <div className="grid grid-cols-3 gap-2">
+                  {deliveryPartners.map((partner) => (
+                    <a key={partner.name} href={safeExternalUrl(partner.url)} target="_blank" rel="noopener noreferrer" className="flex flex-col sm:flex-row items-center justify-center gap-1.5 rounded-xl bg-white border border-[#EADBDA] px-2 py-2.5 text-[11px] font-bold text-gray-800 hover:border-[#831843] hover:text-[#831843] transition-colors">
+                      <img src={partner.logo} alt="" className="w-5 h-5 object-contain" />
+                      <span>{partner.name}</span>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Right Column: Custom Inquiry Form */}
@@ -205,7 +245,7 @@ Please let me know availability and pricing.`;
                   type="submit"
                   className="w-full py-3.5 px-6 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm shadow flex items-center justify-center gap-2 transition-all"
                 >
-                  <MessageCircle className="w-5 h-5 fill-white" />
+                  <WhatsAppIcon className="w-5 h-5" />
                   <span>Send Inquiry via WhatsApp</span>
                 </button>
               </form>
@@ -214,17 +254,6 @@ Please let me know availability and pricing.`;
         </div>
 
         {/* Full-width Map Section */}
-        <div className="rounded-3xl overflow-hidden shadow-md border-2 border-white bg-gray-100 aspect-[16/7]">
-          <iframe
-            title="Google Map Sector 76 Noida"
-            src="https://maps.google.com/maps?q=Amrapali+Crystal+Home+Sector+76+Noida&t=&z=15&ie=UTF8&iwloc=&output=embed"
-            width="100%"
-            height="100%"
-            style={{ border: 0 }}
-            loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-          />
-        </div>
       </div>
     </div>
   );

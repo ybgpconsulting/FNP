@@ -20,12 +20,15 @@ VITE_FIREBASE_APP_ID=your_app_id
 # Admin Access Credentials
 VITE_ADMIN_EMAIL=admin@fnpnoida76.com
 
+# Development-only local admin password (used when Firebase is not configured)
+VITE_LOCAL_ADMIN_PASSWORD=admin123
+
 # Store Contact Defaults
 VITE_DEFAULT_STORE_PHONE="+91 9999517599"
 VITE_DEFAULT_WHATSAPP_NUMBER="919999517599"
 ```
 
-> **Note**: If Firebase environment variables are not supplied initially, the website gracefully functions using pre-configured high-fidelity fallback catalogues and local session persistence for quick evaluation.
+> **Development note**: When Firebase is not configured, Vite development mode uses browser-local storage for catalogue data and a local admin account. The default local credentials are `admin@fnpnoida76.com` / `admin123`; set `VITE_LOCAL_ADMIN_PASSWORD` to change the password. This local mode is disabled in production builds.
 
 ---
 

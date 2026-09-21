@@ -1,6 +1,7 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
 import { Footer } from '../common/Footer';
+import { FloatingWhatsAppButton } from '../common/FloatingWhatsAppButton';
 import { Header } from '../common/Header';
 import { MobileBottomNav } from '../common/MobileBottomNav';
 import { Toast } from '../common/Toast';
@@ -14,6 +15,7 @@ export const PublicLayout: React.FC = () => {
       </main>
       <Footer />
       <MobileBottomNav />
+      <FloatingWhatsAppButton />
       <Toast />
     </div>
   );

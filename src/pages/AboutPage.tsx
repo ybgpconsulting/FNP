@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Award, Cake, Clock, Heart, MapPin, MessageCircle, Phone, ShieldCheck, Sparkles, Store } from 'lucide-react';
+import { Award, Cake, Clock, Heart, MapPin, Phone, ShieldCheck, Sparkles, Store } from 'lucide-react';
 import { SEO } from '../components/common/SEO';
 import { useStore } from '../context/StoreContext';
 

@@ -7,6 +7,7 @@ interface LocationPickerProps {
   storeLat: number;
   storeLon: number;
   radiusKm: number;
+  deliveryEnabled?: boolean;
   initialLat?: number;
   initialLon?: number;
   onConfirmLocation: (lat: number, lon: number, distanceKm: number) => void;
@@ -18,6 +19,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
   storeLat,
   storeLon,
   radiusKm,
+  deliveryEnabled = true,
   initialLat,
   initialLon,
   onConfirmLocation,
@@ -37,7 +39,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
   });
 
   const distanceKm = calculateDistanceKm(selectedCoords.lat, selectedCoords.lon, storeLat, storeLon);
-  const isAvailable = isWithinDeliveryRadius(distanceKm, radiusKm);
+  const isAvailable = deliveryEnabled && isWithinDeliveryRadius(distanceKm, radiusKm);
 
   useEffect(() => {
     if (!mapContainerRef.current) return;
@@ -116,11 +118,12 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
     });
 
     // Invalidate size once rendered
-    setTimeout(() => {
+    const resizeTimer = window.setTimeout(() => {
       map.invalidateSize();
     }, 200);
 
     return () => {
+      window.clearTimeout(resizeTimer);
       map.remove();
     };
   }, [storeLat, storeLon, radiusKm]);

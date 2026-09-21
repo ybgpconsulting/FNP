@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link, useLocation } from 'react-router-dom';
-import { Grid, Home, MessageCircle, Phone, ShoppingBag, Store } from 'lucide-react';
+import { Home, Phone, ShoppingBag, Store } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useStore } from '../../context/StoreContext';
 
@@ -13,11 +13,6 @@ export const MobileBottomNav: React.FC = () => {
   if (location.pathname.startsWith('/admin')) {
     return null;
   }
-
-  const cleanWhatsAppNumber = settings.whatsappNumber.replace(/[^0-9]/g, '') || '919999517599';
-  const directWhatsAppUrl = `https://wa.me/${cleanWhatsAppNumber}?text=${encodeURIComponent(
-    'Hi, I would like to order fresh cakes/flowers from FNP Florist & Bakery, Sector 76 Noida.'
-  )}`;
 
   const cleanPhone = settings.phone ? settings.phone.replace(/[^0-9+]/g, '') : '+919999517599';
 
@@ -85,16 +80,6 @@ export const MobileBottomNav: React.FC = () => {
           <span>Cart</span>
         </Link>
 
-        {/* Direct WhatsApp Instant Order Button */}
-        <a
-          href={directWhatsAppUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex items-center gap-1.5 px-3 py-2 rounded-full bg-[#25D366] text-white text-xs font-bold shadow-sm active:scale-95 transition-all"
-        >
-          <MessageCircle className="w-4 h-4 fill-white" />
-          <span>WhatsApp</span>
-        </a>
       </div>
     </nav>
   );

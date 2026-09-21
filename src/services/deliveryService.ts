@@ -29,7 +29,15 @@ export async function fetchDeliverySettings(): Promise<DeliverySettings> {
   const cached = localStorage.getItem(LS_DELIVERY_SETTINGS_KEY);
   if (cached) {
     try {
-      return JSON.parse(cached);
+      const parsed = JSON.parse(cached) as DeliverySettings;
+      if (
+        typeof parsed.enabled === 'boolean' &&
+        typeof parsed.radiusKm === 'number' &&
+        typeof parsed.storeLatitude === 'number' &&
+        typeof parsed.storeLongitude === 'number'
+      ) {
+        return parsed;
+      }
     } catch {
       // ignore
     }

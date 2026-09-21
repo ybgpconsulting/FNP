@@ -1,5 +1,6 @@
 import React from 'react';
-import { CheckCircle2, XCircle, MapPin, ArrowRight, RotateCcw, MessageCircle } from 'lucide-react';
+import { CheckCircle2, XCircle, MapPin, ArrowRight, RotateCcw } from 'lucide-react';
+import { WhatsAppIcon } from '../common/WhatsAppIcon';
 import { formatDistanceKm } from '../../utils/distance';
 import { DeliverySettings, VerifiedLocation } from '../../types';
 
@@ -117,7 +118,7 @@ export const DeliveryResult: React.FC<DeliveryResultProps> = ({
           rel="noopener noreferrer"
           className="w-full py-3.5 px-6 rounded-2xl bg-[#25D366] hover:bg-[#20bd5a] active:scale-95 text-white font-bold text-sm shadow flex items-center justify-center gap-2 transition-all"
         >
-          <MessageCircle className="w-4 h-4 fill-white" />
+          <WhatsAppIcon className="w-4 h-4" />
           <span>Special Inquiry on WhatsApp</span>
         </a>
       </div>

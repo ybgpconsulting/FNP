@@ -1,6 +1,7 @@
-import React, { useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Check, MessageCircle, Minus, Plus, ShoppingBag, X } from 'lucide-react';
+import { Check, Minus, Plus, ShoppingBag, X } from 'lucide-react';
+import { WhatsAppIcon } from '../common/WhatsAppIcon';
 import { useCart } from '../../context/CartContext';
 import { useStore } from '../../context/StoreContext';
 import { Product } from '../../types';
@@ -13,22 +14,24 @@ interface QuickViewModalProps {
 export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose }) => {
   const { addToCart, generateSingleProductWhatsAppUrl } = useCart();
   const { settings } = useStore();
+  const isCake = product.categoryId === 'cat-cakes' || product.categorySlug === 'cakes';
 
   const [selectedImage, setSelectedImage] = useState<string>(
     product.images?.[0] || 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=800&auto=format&fit=crop'
   );
-  const isCake = product.categoryId === 'cat-cakes' || product.categorySlug === 'cakes';
-  const effectiveFlavorOptions = (product.flavorOptions || (isCake ? ['100% Eggless'] : []))
-    .filter((f) => !f.toLowerCase().includes('with egg') && f.toLowerCase() !== 'regular')
-    .map((f) => (f.toLowerCase().includes('eggless') ? '100% Eggless' : f));
-  if (isCake && effectiveFlavorOptions.length === 0) {
-    effectiveFlavorOptions.push('100% Eggless');
-  }
-
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedWeight, setSelectedWeight] = useState<string | undefined>(product.weightOptions?.[0]);
-  const [selectedFlavor, setSelectedFlavor] = useState<string | undefined>(effectiveFlavorOptions[0] || (isCake ? '100% Eggless' : undefined));
   const [customMessage, setCustomMessage] = useState<string>('');
+  const closeButtonRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    closeButtonRef.current?.focus();
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') onClose();
+    };
+    document.addEventListener('keydown', handleKeyDown);
+    return () => document.removeEventListener('keydown', handleKeyDown);
+  }, [onClose]);
 
   const discountPercent =
     product.oldPrice && product.oldPrice > product.price
@@ -36,7 +39,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
       : 0;
 
   const handleAddToCart = () => {
-    addToCart(product, quantity, selectedWeight, selectedFlavor, customMessage);
+    addToCart(product, quantity, selectedWeight, customMessage);
     onClose();
   };
 
@@ -45,16 +48,16 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
     settings,
     quantity,
     selectedWeight,
-    selectedFlavor,
     customMessage
   );
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
+    <div role="dialog" aria-modal="true" aria-labelledby="quick-view-title" className="fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
       <div className="relative bg-white rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl border border-gray-100 my-8 animate-in fade-in zoom-in-95 duration-200">
         {/* Close Button */}
         <button
           onClick={onClose}
+          ref={closeButtonRef}
           aria-label="Close modal"
           className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/90 hover:bg-gray-100 text-gray-700 shadow transition-colors"
         >
@@ -109,7 +112,7 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
                 )}
               </div>
 
-              <h2 className="font-serif text-2xl font-bold text-gray-900 leading-snug">
+              <h2 id="quick-view-title" className="font-serif text-2xl font-bold text-gray-900 leading-snug">
                 {product.name}
               </h2>
 
@@ -126,14 +129,12 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
               </div>
 
               {/* 100% Eggless Vegetarian Guarantee */}
-              {isCake && (
-                <div className="mt-2.5 inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold w-fit">
+              {isCake && <div className="mt-2.5 inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold w-fit">
                   <span className="w-3 h-3 border-2 border-emerald-700 p-0.5 flex items-center justify-center rounded-xs bg-white shrink-0">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-700"></span>
                   </span>
                   <span>100% Eggless • Pure Veg</span>
-                </div>
-              )}
+              </div>}
 
               <p className="text-xs sm:text-sm text-gray-600 mt-3 leading-relaxed line-clamp-3">
                 {product.description}
@@ -158,34 +159,6 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
                         }`}
                       >
                         {weight}
-                      </button>
-                    ))}
-                  </div>
-                </div>
-              )}
-
-              {/* Flavor / Baking Options */}
-              {effectiveFlavorOptions.length > 0 && (
-                <div className="mt-3">
-                  <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
-                    {isCake ? 'Dietary / Baking Specification' : 'Preference / Flavor'}
-                  </label>
-                  <div className="flex flex-wrap gap-2">
-                    {effectiveFlavorOptions.map((flavor) => (
-                      <button
-                        key={flavor}
-                        type="button"
-                        onClick={() => setSelectedFlavor(flavor)}
-                        className={`px-3 py-1 rounded-lg text-xs font-semibold border transition-all flex items-center gap-1.5 ${
-                          (selectedFlavor === flavor || (!selectedFlavor && flavor === '100% Eggless'))
-                            ? 'bg-emerald-700 text-white border-emerald-700 shadow-xs'
-                            : 'bg-white text-gray-700 border-gray-200 hover:border-gray-400'
-                        }`}
-                      >
-                        {flavor.toLowerCase().includes('eggless') && (
-                          <span className="w-1.5 h-1.5 rounded-full bg-white inline-block"></span>
-                        )}
-                        <span>{flavor}</span>
                       </button>
                     ))}
                   </div>
@@ -247,13 +220,19 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
               </button>
 
               <a
-                href={directWhatsAppUrl}
+                href={product.available ? directWhatsAppUrl : undefined}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="w-full py-3 px-4 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm shadow flex items-center justify-center gap-2 transition-all"
+                aria-disabled={!product.available}
+                onClick={(event) => {
+                  if (!product.available) event.preventDefault();
+                }}
+                className={`w-full py-3 px-4 rounded-xl text-white font-bold text-sm shadow flex items-center justify-center gap-2 transition-all ${
+                  product.available ? 'bg-[#25D366] hover:bg-[#20bd5a]' : 'bg-gray-300 cursor-not-allowed'
+                }`}
               >
-                <MessageCircle className="w-4 h-4 fill-white" />
-                <span>Instant Order on WhatsApp</span>
+                <WhatsAppIcon className="w-4 h-4" />
+                <span>{product.available ? 'Instant Order on WhatsApp' : 'Currently Unavailable'}</span>
               </a>
 
               <div className="text-center pt-1">

@@ -6,16 +6,17 @@ import {
   Heart,
   MapPin,
   Menu,
-  MessageCircle,
   Phone,
   Search,
   ShoppingBag,
+  ShieldCheck,
   Store,
   X,
 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useStore } from '../../context/StoreContext';
-import { DeliveryLocationBadge } from '../delivery/DeliveryLocationBadge';
+import { WhatsAppIcon } from './WhatsAppIcon';
+import { safeExternalUrl } from '../../utils/urls';
 
 export const Header: React.FC = () => {
   const { totalQuantity } = useCart();
@@ -24,6 +25,7 @@ export const Header: React.FC = () => {
   const [categoriesOpen, setCategoriesOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [showSearchModal, setShowSearchModal] = useState(false);
+  const [orderMenuOpen, setOrderMenuOpen] = useState(false);
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -41,6 +43,12 @@ export const Header: React.FC = () => {
     'Hi FNP Florist & Bakery Sector 76, I would like to inquire about products and same-day delivery.'
   )}`;
 
+  const deliveryPartners = [
+    { name: 'Zomato', url: settings.zomatoUrl, logo: 'https://cdn.simpleicons.org/zomato/E23744' },
+    { name: 'Swiggy', url: settings.swiggyUrl, logo: 'https://cdn.simpleicons.org/swiggy/FC8019' },
+    { name: 'Magicpin', url: settings.magicpinUrl, logo: 'https://cdn.simpleicons.org/magicpin/EF4F5F' },
+  ].filter((partner) => partner.url && safeExternalUrl(partner.url));
+
   const isActive = (path: string) => {
     if (path === '/' && location.pathname === '/') return true;
     if (path !== '/' && location.pathname.startsWith(path)) return true;
@@ -48,34 +56,57 @@ export const Header: React.FC = () => {
   };
 
   return (
-    <header className="sticky top-0 z-40 bg-[#FAF8F5]/95 backdrop-blur-md border-b border-[#EADDD7]/60 shadow-[0_2px_15px_rgba(0,0,0,0.03)] transition-all">
+    <header className="premium-header sticky top-0 z-40 bg-[#FAF8F5]/95 backdrop-blur-md border-b-2 border-[#EADDD7]/70 transition-all">
       {/* Top Announcement Bar */}
       {homepageConfig.promoBannerActive && (
-        <div className="bg-[#581c2f] text-[#FDE8EF] text-xs font-medium py-1.5 px-4 text-center tracking-wide overflow-hidden flex items-center justify-center gap-4">
-          <span className="truncate">{settings.bannerAnnouncement || homepageConfig.promoBannerText}</span>
+        <div className="bg-[#581c2f] text-[#FDE8EF] text-xs font-medium py-1.5 px-4 text-center tracking-wide flex flex-wrap items-center justify-center gap-x-4 gap-y-1">
+          <span className="whitespace-normal">{settings.bannerAnnouncement || homepageConfig.promoBannerText}</span>
           <span className="hidden md:inline-flex items-center gap-1 text-[#FBCFE8] hover:underline cursor-pointer">
             <Phone className="w-3 h-3" /> {settings.phone}
           </span>
         </div>
       )}
 
+      <div className="hidden sm:flex items-center justify-center gap-5 bg-[#FFF8F2] border-b border-[#F0E6E1] px-4 py-1.5 text-[10px] font-bold uppercase tracking-[0.16em] text-[#78350F]">
+        <span className="inline-flex items-center gap-1.5">
+          <ShieldCheck className="w-3.5 h-3.5 text-emerald-700" />
+          100% Pure Veg
+        </span>
+        <span className="h-3 w-px bg-[#E8D4CE]" />
+        <span>Freshly prepared daily</span>
+        <span className="h-3 w-px bg-[#E8D4CE]" />
+        <span>Same-day Noida delivery</span>
+      </div>
+
       {/* Main Navbar */}
       <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-4">
           {/* Logo & Local Identity */}
-          <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group shrink-0">
+          <Link to="/" className="premium-reveal flex items-center gap-2.5 sm:gap-3 group shrink-0">
             <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-gradient-to-br from-[#831843] to-[#9D174D] flex items-center justify-center text-white shadow-sm ring-2 ring-[#FCE7F3] group-hover:scale-105 transition-transform">
               <Store className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div className="flex flex-col">
-              <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#4A1525] group-hover:text-[#831843] transition-colors leading-none">
-                FNP
-              </span>
+              <div className="flex items-center gap-2">
+                <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#4A1525] group-hover:text-[#831843] transition-colors leading-none">
+                  FNP
+                </span>
+                <span
+                  title="100% Vegetarian"
+                  aria-label="100% Vegetarian"
+                  className="w-4 h-4 sm:w-[18px] sm:h-[18px] border-2 border-emerald-700 rounded-[3px] flex items-center justify-center shrink-0"
+                >
+                  <span className="w-1.5 h-1.5 sm:w-2 sm:h-2 rounded-full bg-emerald-700" />
+                </span>
+              </div>
               <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-[#78350F] font-semibold font-sans mt-0.5">
                 Florist &amp; Bakery
               </span>
               <span className="text-[9px] sm:text-[10px] text-gray-500 font-medium">
                 Sector 76, Noida
+              </span>
+              <span className="text-[9px] sm:text-[10px] text-emerald-700 font-bold">
+                100% Pure Veg
               </span>
             </div>
           </Link>
@@ -168,11 +199,8 @@ export const Header: React.FC = () => {
             </Link>
           </nav>
 
-          {/* Right Header Actions: Delivery Badge, Search, Cart, WhatsApp CTA */}
+          {/* Right Header Actions: Delivery Badge, Search, Cart, Order CTA */}
           <div className="flex items-center gap-1.5 sm:gap-3">
-            {/* Delivery Location Status Badge */}
-            <DeliveryLocationBadge />
-
             {/* Search Button */}
             <button
               onClick={() => setShowSearchModal(true)}
@@ -196,16 +224,50 @@ export const Header: React.FC = () => {
               )}
             </Link>
 
-            {/* Desktop WhatsApp CTA Button */}
-            <a
-              href={directWhatsAppUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="hidden sm:inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-medium text-sm shadow-sm hover:shadow transition-all group"
-            >
-              <MessageCircle className="w-4 h-4 fill-white" />
-              <span>Order on WhatsApp</span>
-            </a>
+            {/* Desktop delivery partner chooser */}
+            <div className="relative hidden sm:block">
+              <button
+                type="button"
+                onClick={() => setOrderMenuOpen((open) => !open)}
+                aria-expanded={orderMenuOpen}
+                aria-haspopup="menu"
+                className="inline-flex items-center gap-2 px-4 py-2.5 rounded-full bg-[#831843] hover:bg-[#6b1336] text-white font-bold text-sm shadow-sm transition-all"
+              >
+                <ShoppingBag className="w-4 h-4" />
+                <span>Order Now</span>
+                <ChevronDown className={`w-4 h-4 transition-transform ${orderMenuOpen ? 'rotate-180' : ''}`} />
+              </button>
+              {orderMenuOpen && (
+                <div role="menu" className="absolute right-0 top-full mt-2 w-64 rounded-2xl bg-white p-2 shadow-xl border border-gray-100 z-50">
+                  <p className="px-3 py-2 text-[10px] font-bold uppercase tracking-widest text-gray-400">Choose delivery partner</p>
+                  {deliveryPartners.map((partner) => (
+                    <a
+                      key={partner.name}
+                      href={safeExternalUrl(partner.url)}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      role="menuitem"
+                      onClick={() => setOrderMenuOpen(false)}
+                      className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-gray-800 hover:bg-[#FDF2F8] hover:text-[#831843]"
+                    >
+                      <img src={partner.logo} alt="" className="w-6 h-6 object-contain" />
+                      <span>Order on {partner.name}</span>
+                    </a>
+                  ))}
+                  <a
+                    href={directWhatsAppUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    role="menuitem"
+                    onClick={() => setOrderMenuOpen(false)}
+                    className="flex items-center gap-3 rounded-xl px-3 py-2.5 text-sm font-bold text-gray-800 hover:bg-emerald-50 hover:text-emerald-700"
+                  >
+                    <WhatsAppIcon className="w-6 h-6 rounded-md bg-[#25D366] p-1" />
+                    <span>Order on WhatsApp</span>
+                  </a>
+                </div>
+              )}
+            </div>
 
             {/* Mobile Hamburger Menu Toggle */}
             <button
@@ -286,15 +348,30 @@ export const Header: React.FC = () => {
           </div>
 
           <div className="pt-6 border-t border-gray-100 space-y-3">
-            <a
-              href={directWhatsAppUrl}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="w-full flex items-center justify-center gap-2 py-3.5 rounded-xl bg-[#25D366] text-white font-medium text-base shadow"
-            >
-              <MessageCircle className="w-5 h-5 fill-white" />
-              <span>Chat with us on WhatsApp</span>
-            </a>
+            <p className="text-xs font-bold uppercase tracking-widest text-gray-400">Order Now</p>
+            <div className="grid grid-cols-2 gap-2">
+              {deliveryPartners.map((partner) => (
+                <a
+                  key={partner.name}
+                  href={safeExternalUrl(partner.url)}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="flex items-center justify-center gap-2 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-800 font-bold text-xs"
+                >
+                  <img src={partner.logo} alt="" className="w-5 h-5 object-contain" />
+                  <span>{partner.name}</span>
+                </a>
+              ))}
+              <a
+                href={directWhatsAppUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="flex items-center justify-center gap-2 py-3 rounded-xl bg-[#25D366] text-white font-bold text-xs"
+              >
+                <WhatsAppIcon className="w-4 h-4" />
+                <span>WhatsApp</span>
+              </a>
+            </div>
 
             <div className="text-center text-xs text-gray-500">
               <p className="font-medium text-gray-700">{settings.address}</p>

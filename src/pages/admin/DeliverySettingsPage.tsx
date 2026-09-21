@@ -385,13 +385,15 @@ export const DeliverySettingsPage: React.FC = () => {
 
       {/* Map Picker Modal for Admin to pick Store Location */}
       {showMapModal && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div role="dialog" aria-modal="true" aria-labelledby="store-location-modal-title" className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl p-6 max-w-xl w-full shadow-2xl border border-gray-200">
+            <h2 id="store-location-modal-title" className="sr-only">Select FNP Store Location</h2>
             <LocationPicker
               title="Select FNP Store Location"
               storeLat={formData.storeLatitude}
               storeLon={formData.storeLongitude}
               radiusKm={formData.radiusKm}
+              deliveryEnabled={formData.enabled}
               initialLat={formData.storeLatitude}
               initialLon={formData.storeLongitude}
               onConfirmLocation={handleMapConfirm}

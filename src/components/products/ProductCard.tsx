@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Eye, MessageCircle, Plus, ShoppingBag } from 'lucide-react';
+import { Eye, Plus, ShoppingBag } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useStore } from '../../context/StoreContext';
 import { Product } from '../../types';
@@ -25,8 +25,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
     e.preventDefault();
     e.stopPropagation();
     const defaultWeight = product.weightOptions?.[0];
-    const defaultFlavor = product.flavorOptions?.[0];
-    addToCart(product, 1, defaultWeight, defaultFlavor);
+    addToCart(product, 1, defaultWeight);
   };
 
   const primaryImage =
@@ -40,7 +39,7 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
   return (
     <>
       <div
-        className="group relative bg-white rounded-2xl overflow-hidden border border-[#EBE3DE] hover:border-[#D1B8B3] hover:shadow-[0_8px_30px_rgba(131,24,67,0.08)] transition-all duration-300 flex flex-col h-full"
+        className="premium-card group relative bg-white rounded-2xl overflow-hidden border border-[#EBE3DE] hover:border-[#D1B8B3] flex flex-col h-full"
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >

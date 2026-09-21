@@ -4,6 +4,7 @@ import { SEO } from '../../components/common/SEO';
 import { useStore } from '../../context/StoreContext';
 import { uploadProductImage } from '../../firebase/storageService';
 import { HomepageConfig } from '../../types';
+import { safeCtaUrl, safeImageUrl } from '../../utils/urls';
 
 export const AdminHomepagePage: React.FC = () => {
   const { homepageConfig, updateHomepage } = useStore();
@@ -11,6 +12,7 @@ export const AdminHomepagePage: React.FC = () => {
   const [formData, setFormData] = useState<HomepageConfig>({ ...homepageConfig });
   const [isUploading, setIsUploading] = useState(false);
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const handleHeroImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -34,9 +36,22 @@ export const AdminHomepagePage: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await updateHomepage(formData);
-    setSaveSuccess(true);
-    setTimeout(() => setSaveSuccess(false), 3000);
+    setSaveError(null);
+    if (!safeImageUrl(formData.heroImage)) {
+      setSaveError('Hero image must use a valid http or https URL.');
+      return;
+    }
+    if (safeCtaUrl(formData.heroCtaLink) === '/shop' && formData.heroCtaLink.trim() !== '/shop') {
+      setSaveError('CTA link must be an internal path or valid http/https URL.');
+      return;
+    }
+    try {
+      await updateHomepage(formData);
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch {
+      setSaveError('Could not save homepage changes. Please try again.');
+    }
   };
 
   return (
@@ -68,6 +83,7 @@ export const AdminHomepagePage: React.FC = () => {
           <span>Homepage updates published live successfully!</span>
         </div>
       )}
+      {saveError && <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bold">{saveError}</div>}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Top Promo Banner Section */}

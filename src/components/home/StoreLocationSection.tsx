@@ -1,6 +1,8 @@
 import React from 'react';
-import { Clock, ExternalLink, MapPin, MessageCircle, Navigation, Phone, ShieldCheck, Store } from 'lucide-react';
+import { Clock, MapPin, Navigation, Phone, Store } from 'lucide-react';
 import { useStore } from '../../context/StoreContext';
+import { WhatsAppIcon } from '../common/WhatsAppIcon';
+import { safeExternalUrl } from '../../utils/urls';
 
 export const StoreLocationSection: React.FC = () => {
   const { settings } = useStore();
@@ -17,7 +19,7 @@ export const StoreLocationSection: React.FC = () => {
         <div className="bg-gradient-to-br from-[#FAF5F2] to-[#FFF9F6] rounded-3xl p-6 sm:p-10 lg:p-12 border border-[#EADBDA] shadow-lg">
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
             {/* Left Content Column */}
-            <div className="lg:col-span-7 space-y-6">
+            <div className="lg:col-span-12 space-y-6">
               <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#FCE7F3] text-[#831843] text-xs font-bold uppercase tracking-wider">
                 <Store className="w-3.5 h-3.5" />
                 <span>Visit Our Neighborhood Store</span>
@@ -72,7 +74,7 @@ export const StoreLocationSection: React.FC = () => {
 
                 {/* 2. Get Directions */}
                 <a
-                  href={settings.mapsUrl}
+                  href={safeExternalUrl(settings.mapsUrl)}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#831843] hover:bg-[#6b1336] text-white font-bold text-sm shadow transition-all active:scale-95"
@@ -88,40 +90,12 @@ export const StoreLocationSection: React.FC = () => {
                   rel="noopener noreferrer"
                   className="inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white font-bold text-sm shadow transition-all active:scale-95"
                 >
-                  <MessageCircle className="w-4 h-4 fill-white" />
+                  <WhatsAppIcon className="w-4 h-4" />
                   <span>Order on WhatsApp</span>
                 </a>
               </div>
             </div>
 
-            {/* Right Map Embed / Graphic Preview */}
-            <div className="lg:col-span-5">
-              <div className="relative rounded-2xl overflow-hidden shadow-md border-2 border-white bg-gray-100 aspect-[4/3]">
-                {/* Interactive Map Embed pointing to Sector 76 Noida */}
-                <iframe
-                  title="FNP Florist & Bakery Sector 76 Noida Google Map"
-                  src="https://maps.google.com/maps?q=Amrapali+Crystal+Home+Sector+76+Noida&t=&z=15&ie=UTF8&iwloc=&output=embed"
-                  width="100%"
-                  height="100%"
-                  style={{ border: 0 }}
-                  loading="lazy"
-                  referrerPolicy="no-referrer-when-downgrade"
-                  className="w-full h-full"
-                />
-
-                <div className="absolute bottom-3 right-3">
-                  <a
-                    href={settings.mapsUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-white/95 text-xs font-bold text-gray-800 shadow hover:bg-white transition-colors"
-                  >
-                    <span>Open in Maps</span>
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </a>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>

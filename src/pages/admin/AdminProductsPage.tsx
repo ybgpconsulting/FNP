@@ -270,13 +270,13 @@ export const AdminProductsPage: React.FC = () => {
 
       {/* Delete Confirmation Modal */}
       {deletingProductId && (
-        <div className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
+        <div role="dialog" aria-modal="true" aria-labelledby="product-delete-modal-title" className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl p-6 sm:p-8 max-w-sm w-full space-y-4 shadow-xl border border-gray-100 animate-in fade-in duration-150">
             <div className="w-12 h-12 rounded-2xl bg-rose-100 text-rose-600 flex items-center justify-center mx-auto">
               <AlertCircle className="w-6 h-6" />
             </div>
             <div className="text-center space-y-1">
-              <h3 className="font-serif text-xl font-bold text-gray-900">Delete Product?</h3>
+              <h3 id="product-delete-modal-title" className="font-serif text-xl font-bold text-gray-900">Delete Product?</h3>
               <p className="text-xs text-gray-500">
                 Are you sure you want to remove this item from the store catalogue? This action cannot be undone.
               </p>

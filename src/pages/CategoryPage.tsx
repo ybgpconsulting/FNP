@@ -16,6 +16,7 @@ export const CategoryPage: React.FC = () => {
     if (!currentCategory) return [];
 
     return products
+      .filter((p) => p.available)
       .filter((p) => p.categoryId === currentCategory.id || p.categoryName?.toLowerCase() === currentCategory.name.toLowerCase())
       .sort((a, b) => {
         if (sortBy === 'price-low') return a.price - b.price;

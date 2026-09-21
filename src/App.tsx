@@ -46,14 +46,12 @@ export default function App() {
                 {/* Admin Portal Routes */}
                 <Route path="/admin/login" element={<AdminLoginPage />} />
                 <Route path="/admin" element={<AdminLoginPage />} />
-                <Route path="/admin" element={<AdminLayout />}>
-                  <Route index element={<Navigate to="/admin/products" replace />} />
-                  <Route path="products" element={<AdminProductsPage />} />
-                  <Route path="categories" element={<AdminCategoriesPage />} />
-                  <Route path="homepage" element={<AdminHomepagePage />} />
-                  <Route path="delivery" element={<DeliverySettingsPage />} />
-                  <Route path="settings" element={<AdminSettingsPage />} />
-                  <Route path="*" element={<Navigate to="/admin/products" replace />} />
+                <Route element={<AdminLayout />}>
+                  <Route path="/admin/products" element={<AdminProductsPage />} />
+                  <Route path="/admin/categories" element={<AdminCategoriesPage />} />
+                  <Route path="/admin/homepage" element={<AdminHomepagePage />} />
+                  <Route path="/admin/delivery" element={<DeliverySettingsPage />} />
+                  <Route path="/admin/settings" element={<AdminSettingsPage />} />
                 </Route>
 
                 {/* Fallback 404 to Home */}

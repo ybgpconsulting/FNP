@@ -29,11 +29,20 @@ service firebase.storage {
              request.resource.contentType in ['image/jpeg', 'image/png', 'image/webp'];
     }
 
-    // Protected 'products/' path structure:
-    // - Public read access allows customer storefront catalog rendering
-    // - Create and update operations are strictly restricted to authenticated administrators uploading valid images
-    // - Delete operations are strictly restricted to authenticated administrators
+    // Protected catalogue and CMS image paths.
     match /products/{allPaths=**} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidProductImage();
+      allow delete: if isAdmin();
+    }
+
+    match /categories/{allPaths=**} {
+      allow read: if true;
+      allow create, update: if isAdmin() && isValidProductImage();
+      allow delete: if isAdmin();
+    }
+
+    match /homepage/{allPaths=**} {
       allow read: if true;
       allow create, update: if isAdmin() && isValidProductImage();
       allow delete: if isAdmin();

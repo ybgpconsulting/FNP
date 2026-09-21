@@ -8,7 +8,6 @@ interface CartContextType {
     product: Product,
     quantity?: number,
     selectedWeight?: string,
-    selectedFlavor?: string,
     customMessage?: string
   ) => void;
   removeFromCart: (index: number) => void;
@@ -32,7 +31,6 @@ interface CartContextType {
     settings: StoreSettings,
     quantity?: number,
     weight?: string,
-    flavor?: string,
     customMessage?: string
   ) => string;
 }
@@ -41,14 +39,35 @@ const CartContext = createContext<CartContextType | undefined>(undefined);
 
 const CART_STORAGE_KEY = 'fnp_noida76_cart_v1';
 
+function readStoredCart(): CartItem[] {
+  try {
+    const raw = localStorage.getItem(CART_STORAGE_KEY);
+    if (!raw) return [];
+    const parsed: unknown = JSON.parse(raw);
+    if (!Array.isArray(parsed)) return [];
+    return parsed.filter((item): item is CartItem => {
+      if (!item || typeof item !== 'object') return false;
+      const candidate = item as Partial<CartItem>;
+      return Boolean(
+        candidate.product &&
+        typeof candidate.product.id === 'string' &&
+        typeof candidate.product.name === 'string' &&
+        typeof candidate.product.price === 'number' &&
+        Number.isFinite(candidate.product.price) &&
+        typeof candidate.quantity === 'number' &&
+        Number.isFinite(candidate.quantity) &&
+        candidate.quantity > 0
+      );
+    });
+  } catch {
+    localStorage.removeItem(CART_STORAGE_KEY);
+    return [];
+  }
+}
+
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [cart, setCart] = useState<CartItem[]>(() => {
-    try {
-      const saved = localStorage.getItem(CART_STORAGE_KEY);
-      return saved ? JSON.parse(saved) : [];
-    } catch {
-      return [];
-    }
+    return readStoredCart();
   });
 
   const [toastMessage, setToastMessage] = useState<string | null>(null);
@@ -74,7 +93,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     product: Product,
     quantity = 1,
     selectedWeight?: string,
-    selectedFlavor?: string,
     customMessage?: string
   ) => {
     const safeQuantity = Math.max(1, Math.min(99, Math.floor(quantity || 1)));
@@ -89,7 +107,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
         (item) =>
           item.product.id === product.id &&
           item.selectedWeight === selectedWeight &&
-          item.selectedFlavor === selectedFlavor &&
           item.customMessage === customMessage
       );
 
@@ -104,7 +121,6 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
             product: sanitizedProduct,
             quantity: safeQuantity,
             selectedWeight,
-            selectedFlavor,
             customMessage,
           },
         ];
@@ -163,10 +179,7 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const productLines = cart.map((item, index) => {
       const optionsParts = [];
       if (item.selectedWeight) optionsParts.push(`Weight: ${item.selectedWeight}`);
-      if (item.selectedFlavor) {
-        const flavorClean = item.selectedFlavor.toLowerCase().includes('egg') ? '100% Eggless' : item.selectedFlavor;
-        optionsParts.push(`Type: ${flavorClean}`);
-      } else if (item.product.categoryId === 'cat-cakes' || item.product.categorySlug === 'cakes') {
+      if (item.product.categoryId === 'cat-cakes' || item.product.categorySlug === 'cakes') {
         optionsParts.push(`Type: 100% Eggless`);
       }
       if (item.customMessage) optionsParts.push(`Message on Cake/Card: "${item.customMessage}"`);
@@ -246,7 +259,6 @@ ${mapsUrl}
     settings: StoreSettings,
     quantity = 1,
     weight?: string,
-    flavor?: string,
     customMessage?: string
   ): string => {
     const rawNumber = settings.whatsappNumber || '919999517599';
@@ -254,10 +266,7 @@ ${mapsUrl}
 
     const optionsParts = [];
     if (weight) optionsParts.push(`Weight: ${weight}`);
-    if (flavor) {
-      const flavorClean = flavor.toLowerCase().includes('egg') ? '100% Eggless' : flavor;
-      optionsParts.push(`Type: ${flavorClean}`);
-    } else if (product.categoryId === 'cat-cakes' || product.categorySlug === 'cakes') {
+    if (product.categoryId === 'cat-cakes' || product.categorySlug === 'cakes') {
       optionsParts.push(`Type: 100% Eggless`);
     }
     if (customMessage) optionsParts.push(`Message: "${customMessage}"`);

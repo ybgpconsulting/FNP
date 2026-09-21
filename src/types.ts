@@ -20,8 +20,6 @@ export interface Product {
   // Product options/attributes for future-readiness
   weightOptions?: string[]; // e.g. ['500g', '1kg', '2kg']
   selectedWeight?: string;
-  flavorOptions?: string[]; // e.g. ['100% Eggless']
-  selectedFlavor?: string;
   allowCustomMessage?: boolean;
   customMessagePlaceholder?: string;
   createdAt: string;
@@ -48,6 +46,9 @@ export interface StoreSettings {
   instagramUrl: string;
   facebookUrl: string;
   twitterUrl: string;
+  zomatoUrl?: string;
+  swiggyUrl?: string;
+  magicpinUrl?: string;
   openingHours: string;
   whatsappMessage: string;
   websiteTitle: string;
@@ -76,7 +77,6 @@ export interface CartItem {
   product: Product;
   quantity: number;
   selectedWeight?: string;
-  selectedFlavor?: string;
   customMessage?: string;
 }
 

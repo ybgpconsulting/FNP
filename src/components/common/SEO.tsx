@@ -41,16 +41,14 @@ export const SEO: React.FC<SEOProps> = ({
     updateMeta('name', 'twitter:description', description);
     updateMeta('name', 'twitter:image', image);
 
-    // Canonical link
-    if (canonical) {
-      let link = document.querySelector('link[rel="canonical"]');
-      if (!link) {
-        link = document.createElement('link');
-        link.setAttribute('rel', 'canonical');
-        document.head.appendChild(link);
-      }
-      link.setAttribute('href', canonical);
+    // Keep each client-side route canonical instead of inheriting index.html's URL.
+    let link = document.querySelector('link[rel="canonical"]');
+    if (!link) {
+      link = document.createElement('link');
+      link.setAttribute('rel', 'canonical');
+      document.head.appendChild(link);
     }
+    link.setAttribute('href', canonical || `${window.location.origin}${window.location.pathname}`);
 
     // Dynamic JSON-LD script if provided
     let scriptEl: HTMLScriptElement | null = null;

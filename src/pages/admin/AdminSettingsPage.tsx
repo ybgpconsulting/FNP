@@ -1,20 +1,43 @@
 import React, { useState } from 'react';
-import { CheckCircle2, Globe, MapPin, MessageCircle, Phone, Save, Settings, Share2, Sparkles } from 'lucide-react';
+import { CheckCircle2, Globe, MapPin, Phone, Save, Settings, Share2, Sparkles, Truck } from 'lucide-react';
 import { SEO } from '../../components/common/SEO';
 import { useStore } from '../../context/StoreContext';
 import { StoreSettings } from '../../types';
+import { safeExternalUrl } from '../../utils/urls';
 
 export const AdminSettingsPage: React.FC = () => {
   const { settings, updateSettings } = useStore();
 
   const [formData, setFormData] = useState<StoreSettings>({ ...settings });
   const [saveSuccess, setSaveSuccess] = useState(false);
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await updateSettings(formData);
-    setSaveSuccess(true);
-    setTimeout(() => setSaveSuccess(false), 3000);
+    setSaveError(null);
+    if (!/^[0-9+()\-\s]{10,30}$/.test(formData.phone.trim())) {
+      setSaveError('Please enter a valid store phone number.');
+      return;
+    }
+    if (!/^\d{10,15}$/.test(formData.whatsappNumber.replace(/\D/g, ''))) {
+      setSaveError('Please enter a valid WhatsApp number with country code.');
+      return;
+    }
+    if (!safeExternalUrl(formData.mapsUrl)) {
+      setSaveError('Please enter a valid Google Maps URL.');
+      return;
+    }
+    if ([formData.instagramUrl, formData.facebookUrl, formData.twitterUrl, formData.zomatoUrl, formData.swiggyUrl, formData.magicpinUrl].some((url) => url && !safeExternalUrl(url))) {
+      setSaveError('All external links must use http or https URLs.');
+      return;
+    }
+    try {
+      await updateSettings(formData);
+      setSaveSuccess(true);
+      setTimeout(() => setSaveSuccess(false), 3000);
+    } catch {
+      setSaveError('Could not save store settings. Please try again.');
+    }
   };
 
   const handleChange = (field: keyof StoreSettings, value: string) => {
@@ -51,6 +74,7 @@ export const AdminSettingsPage: React.FC = () => {
           <span>Store settings successfully updated!</span>
         </div>
       )}
+      {saveError && <div className="p-4 rounded-2xl bg-rose-50 border border-rose-200 text-rose-800 text-xs font-bold">{saveError}</div>}
 
       <form onSubmit={handleSubmit} className="space-y-6">
         {/* Core Store Details & WhatsApp */}
@@ -205,6 +229,37 @@ export const AdminSettingsPage: React.FC = () => {
                 className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs"
               />
             </div>
+          </div>
+        </div>
+
+        {/* Delivery Partner Links */}
+        <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#EADBDA] shadow-sm space-y-4">
+          <h2 className="font-serif text-lg font-bold text-gray-900 flex items-center gap-2">
+            <Truck className="w-5 h-5 text-[#831843]" />
+            <span>Delivery Partner Links</span>
+          </h2>
+          <p className="text-xs text-gray-500">
+            Add your live restaurant or store URLs. Empty fields stay hidden on the website.
+          </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            {([
+              ['zomatoUrl', 'Zomato URL', 'https://www.zomato.com/...'],
+              ['swiggyUrl', 'Swiggy URL', 'https://www.swiggy.com/...'],
+              ['magicpinUrl', 'Magicpin URL', 'https://magicpin.in/...'],
+            ] as const).map(([field, label, placeholder]) => (
+              <div key={field}>
+                <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">
+                  {label}
+                </label>
+                <input
+                  type="url"
+                  value={formData[field] || ''}
+                  onChange={(e) => handleChange(field, e.target.value)}
+                  placeholder={placeholder}
+                  className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:ring-2 focus:ring-[#831843] focus:outline-none"
+                />
+              </div>
+            ))}
           </div>
         </div>
 
