@@ -1,11 +1,11 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AlertCircle, ArrowRight, CheckCircle2, KeyRound, Lock, Mail, Store } from 'lucide-react';
+import { AlertCircle, ArrowRight, CheckCircle2, Lock, Mail, ShieldAlert, Store } from 'lucide-react';
 import { SEO } from '../../components/common/SEO';
 import { useAuth } from '../../context/AuthContext';
 
 export const AdminLoginPage: React.FC = () => {
-  const { login, forgotPassword } = useAuth();
+  const { adminUser, login, forgotPassword } = useAuth();
   const navigate = useNavigate();
 
   const [email, setEmail] = useState('');
@@ -16,6 +16,12 @@ export const AdminLoginPage: React.FC = () => {
   const [showForgotModal, setShowForgotModal] = useState(false);
   const [resetEmail, setResetEmail] = useState('');
 
+  useEffect(() => {
+    if (adminUser) {
+      navigate('/admin/products', { replace: true });
+    }
+  }, [adminUser, navigate]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -25,7 +31,7 @@ export const AdminLoginPage: React.FC = () => {
       await login(email, password);
       navigate('/admin/products');
     } catch (err: any) {
-      setError(err?.message || 'Login failed. Please verify your credentials.');
+      setError(err?.message || 'Authentication failed. Please verify your credentials.');
     } finally {
       setLoading(false);
     }
@@ -41,11 +47,6 @@ export const AdminLoginPage: React.FC = () => {
     } catch (err: any) {
       setError(err?.message || 'Failed to trigger reset email.');
     }
-  };
-
-  const handleFillDemo = () => {
-    setEmail('admin@fnpnoida76.com');
-    setPassword('admin123');
   };
 
   return (
@@ -130,7 +131,7 @@ export const AdminLoginPage: React.FC = () => {
               className="w-full py-3.5 px-4 rounded-xl bg-[#831843] hover:bg-[#6b1336] text-white font-bold text-sm shadow-md flex items-center justify-center gap-2 transition-all disabled:opacity-50"
             >
               {loading ? (
-                <span>Signing in...</span>
+                <span>Verifying credentials...</span>
               ) : (
                 <>
                   <span>Sign In to Dashboard</span>
@@ -140,17 +141,9 @@ export const AdminLoginPage: React.FC = () => {
             </button>
           </form>
 
-          {/* Quick Demo Credentials for Instant Evaluation */}
-          <div className="mt-6 pt-5 border-t border-gray-100 text-center">
-            <p className="text-xs text-gray-500 mb-2">Quick Evaluation / Store Manager Access:</p>
-            <button
-              type="button"
-              onClick={handleFillDemo}
-              className="px-3 py-1.5 rounded-lg bg-gray-100 hover:bg-gray-200 text-xs font-semibold text-gray-700 transition-colors inline-flex items-center gap-1.5"
-            >
-              <KeyRound className="w-3.5 h-3.5" />
-              <span>Click to Autofill Demo Credentials</span>
-            </button>
+          <div className="mt-6 pt-5 border-t border-gray-100 flex items-center gap-2 text-xs text-gray-500">
+            <ShieldAlert className="w-4 h-4 text-gray-400 shrink-0" />
+            <span>Authorized access only. All authentication attempts are verified via Firebase security policies.</span>
           </div>
         </div>
       </div>

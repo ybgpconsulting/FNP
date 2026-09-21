@@ -9,7 +9,7 @@ export const PublicLayout: React.FC = () => {
   return (
     <div className="min-h-screen flex flex-col bg-[#FAF8F5] text-gray-900 selection:bg-[#FCE7F3] selection:text-[#831843]">
       <Header />
-      <main className="flex-grow">
+      <main className="flex-grow pb-16 lg:pb-0">
         <Outlet />
       </main>
       <Footer />

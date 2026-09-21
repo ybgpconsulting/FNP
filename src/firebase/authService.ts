@@ -44,43 +44,44 @@ export async function checkIsAdmin(user: User | null): Promise<boolean> {
 export async function loginAdminWithCredentials(email: string, pass: string): Promise<AdminUser> {
   const cleanEmail = email.trim().toLowerCase();
 
-  // If Firebase Auth is configured
+  if (!cleanEmail || !pass) {
+    throw new Error('Please enter both your administrator email and password.');
+  }
+
+  // Enforce Firebase Authentication
   if (isFirebaseConfigured() && auth) {
-    const cred = await signInWithEmailAndPassword(auth, cleanEmail, pass);
-    const isAdmin = await checkIsAdmin(cred.user);
+    try {
+      const cred = await signInWithEmailAndPassword(auth, cleanEmail, pass);
+      const isAdmin = await checkIsAdmin(cred.user);
 
-    if (!isAdmin) {
-      await signOut(auth);
-      throw new Error('Access denied. This account does not have administrator privileges.');
+      if (!isAdmin) {
+        await signOut(auth);
+        sessionStorage.removeItem(LOCAL_ADMIN_STORAGE_KEY);
+        throw new Error('Access denied. This account does not have administrator privileges in the store management registry.');
+      }
+
+      const adminUser: AdminUser = {
+        uid: cred.user.uid,
+        email: cred.user.email,
+        displayName: cred.user.displayName || 'Store Admin',
+        isAdmin: true,
+      };
+      sessionStorage.setItem(LOCAL_ADMIN_STORAGE_KEY, JSON.stringify(adminUser));
+      return adminUser;
+    } catch (err: any) {
+      if (err.code === 'auth/user-not-found' || err.code === 'auth/wrong-password' || err.code === 'auth/invalid-credential') {
+        throw new Error('Invalid email or password. Please check your credentials and try again.');
+      }
+      if (err.code === 'auth/too-many-requests') {
+        throw new Error('Too many unsuccessful login attempts. Please wait a moment or reset your password.');
+      }
+      throw err;
     }
-
-    const adminUser: AdminUser = {
-      uid: cred.user.uid,
-      email: cred.user.email,
-      displayName: cred.user.displayName || 'Store Admin',
-      isAdmin: true,
-    };
-    sessionStorage.setItem(LOCAL_ADMIN_STORAGE_KEY, JSON.stringify(adminUser));
-    return adminUser;
   }
 
-  // Fallback demo admin authentication (allows non-technical business owner to preview and manage immediately)
-  if (
-    (cleanEmail === 'admin@fnpnoida76.com' && pass === 'admin123') ||
-    (cleanEmail === 'ybgp.consulting@gmail.com' && pass.length >= 6) ||
-    (pass === 'admin123' && cleanEmail.includes('@'))
-  ) {
-    const mockAdmin: AdminUser = {
-      uid: 'demo-admin-uid-1',
-      email: cleanEmail,
-      displayName: 'FNP Sector 76 Manager',
-      isAdmin: true,
-    };
-    sessionStorage.setItem(LOCAL_ADMIN_STORAGE_KEY, JSON.stringify(mockAdmin));
-    return mockAdmin;
-  }
-
-  throw new Error('Invalid email or password. For demo access use admin@fnpnoida76.com with admin123');
+  throw new Error(
+    'Firebase Authentication is not configured. Please configure your VITE_FIREBASE_* environment variables with your production Firebase project to sign in.'
+  );
 }
 
 export async function logoutAdminUser(): Promise<void> {
@@ -130,12 +131,14 @@ export function subscribeToAuthChanges(callback: (user: AdminUser | null) => voi
           return;
         }
       }
-      // Check session storage
-      callback(getStoredAdminUser());
+      // Not logged in or not an authorized admin
+      sessionStorage.removeItem(LOCAL_ADMIN_STORAGE_KEY);
+      callback(null);
     });
   }
 
-  // Local storage mode listener
-  callback(getStoredAdminUser());
+  // Firebase not configured
+  sessionStorage.removeItem(LOCAL_ADMIN_STORAGE_KEY);
+  callback(null);
   return () => {};
 }

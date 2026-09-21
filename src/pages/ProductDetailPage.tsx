@@ -37,12 +37,20 @@ export const ProductDetailPage: React.FC = () => {
   const [selectedFlavor, setSelectedFlavor] = useState<string | undefined>(undefined);
   const [customMessage, setCustomMessage] = useState<string>('');
 
+  const isCake = product?.categoryId === 'cat-cakes' || product?.categorySlug === 'cakes';
+  const effectiveFlavorOptions = (product?.flavorOptions || (isCake ? ['100% Eggless'] : []))
+    .filter((f) => !f.toLowerCase().includes('with egg') && f.toLowerCase() !== 'regular')
+    .map((f) => (f.toLowerCase().includes('eggless') ? '100% Eggless' : f));
+  if (isCake && effectiveFlavorOptions.length === 0) {
+    effectiveFlavorOptions.push('100% Eggless');
+  }
+
   // Sync initial state when product loads
   React.useEffect(() => {
     if (product) {
       setActiveImage(product.images?.[0] || '');
       setSelectedWeight(product.weightOptions?.[0]);
-      setSelectedFlavor(product.flavorOptions?.[0]);
+      setSelectedFlavor(effectiveFlavorOptions[0] || (isCake ? '100% Eggless' : undefined));
       setQuantity(1);
       setCustomMessage('');
     }
@@ -108,7 +116,7 @@ export const ProductDetailPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#FAF8F5] py-8 sm:py-12">
+    <div className="min-h-screen bg-[#FAF8F5] pt-4 pb-28 sm:py-12">
       <SEO
         title={`${product.name} in Sector 76 Noida | FNP Florist & Bakery`}
         description={`Order ${product.name} freshly prepared in Sector 76 Noida. ₹${product.price}. Same-day delivery, personalized message options, and fast WhatsApp order confirmation.`}
@@ -227,6 +235,16 @@ export const ProductDetailPage: React.FC = () => {
                   )}
                 </div>
 
+                {/* 100% Eggless Vegetarian Guarantee */}
+                {isCake && (
+                  <div className="mt-3.5 inline-flex items-center gap-2 px-3 py-1.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold shadow-xs">
+                    <span className="w-3.5 h-3.5 border-2 border-emerald-700 p-0.5 flex items-center justify-center rounded-xs bg-white shrink-0">
+                      <span className="w-1.5 h-1.5 rounded-full bg-emerald-700"></span>
+                    </span>
+                    <span>100% Eggless • Pure Vegetarian Bakery</span>
+                  </div>
+                )}
+
                 {/* Description */}
                 <div className="mt-4 pt-4 border-t border-gray-100">
                   <p className="text-sm text-gray-600 leading-relaxed">
@@ -259,25 +277,28 @@ export const ProductDetailPage: React.FC = () => {
                   </div>
                 )}
 
-                {/* Flavor Options */}
-                {product.flavorOptions && product.flavorOptions.length > 0 && (
+                {/* Flavor / Baking Options */}
+                {effectiveFlavorOptions.length > 0 && (
                   <div className="mt-5">
                     <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
-                      Preference / Flavor Type
+                      {isCake ? 'Dietary / Baking Specification' : 'Preference / Flavor Type'}
                     </label>
                     <div className="flex flex-wrap gap-2.5">
-                      {product.flavorOptions.map((flavor) => (
+                      {effectiveFlavorOptions.map((flavor) => (
                         <button
                           key={flavor}
                           type="button"
                           onClick={() => setSelectedFlavor(flavor)}
-                          className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all ${
-                            selectedFlavor === flavor
-                              ? 'bg-[#831843] text-white border-[#831843] shadow-sm'
+                          className={`px-4 py-2 rounded-xl text-xs font-bold border transition-all flex items-center gap-1.5 ${
+                            (selectedFlavor === flavor || (!selectedFlavor && flavor === '100% Eggless'))
+                              ? 'bg-emerald-700 text-white border-emerald-700 shadow-sm'
                               : 'bg-white text-gray-700 border-gray-200 hover:border-gray-400'
                           }`}
                         >
-                          {flavor}
+                          {flavor.toLowerCase().includes('eggless') && (
+                            <span className="w-2 h-2 rounded-full bg-white inline-block"></span>
+                          )}
+                          <span>{flavor}</span>
                         </button>
                       ))}
                     </div>
@@ -363,7 +384,7 @@ export const ProductDetailPage: React.FC = () => {
                   </div>
                   <div className="flex items-center gap-2">
                     <Sparkles className="w-4 h-4 text-[#831843] shrink-0" />
-                    <span>100% Fresh Daily Bake</span>
+                    <span>100% Eggless Fresh Bake</span>
                   </div>
                   <div className="flex items-center gap-2">
                     <MapPin className="w-4 h-4 text-[#831843] shrink-0" />
@@ -397,6 +418,40 @@ export const ProductDetailPage: React.FC = () => {
             </div>
           </section>
         )}
+      </div>
+
+      {/* Sticky Mobile Purchase Action Bar */}
+      <div className="lg:hidden fixed bottom-[52px] inset-x-0 bg-white/98 backdrop-blur-md border-t border-[#EADBDA] p-3 shadow-[0_-6px_25px_rgba(0,0,0,0.08)] z-30">
+        <div className="flex items-center justify-between gap-3 max-w-md mx-auto">
+          <div className="flex flex-col shrink-0">
+            <span className="text-[10px] uppercase font-bold text-gray-400">Total Price</span>
+            <span className="text-lg font-extrabold text-[#831843] leading-none">
+              ₹{product.price * quantity}
+            </span>
+          </div>
+
+          <div className="flex items-center gap-2 flex-grow justify-end">
+            <button
+              type="button"
+              onClick={handleAddToCart}
+              disabled={!product.available}
+              className="flex-1 py-2.5 px-3 rounded-xl bg-[#831843] hover:bg-[#6b1336] active:scale-95 text-white font-bold text-xs shadow flex items-center justify-center gap-1.5 transition-all disabled:opacity-50"
+            >
+              <ShoppingBag className="w-4 h-4" />
+              <span>Add to Cart</span>
+            </button>
+
+            <a
+              href={directWhatsAppUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="py-2.5 px-3.5 rounded-xl bg-[#25D366] hover:bg-[#20bd5a] active:scale-95 text-white font-bold text-xs shadow flex items-center justify-center gap-1.5 transition-all"
+            >
+              <MessageCircle className="w-4 h-4 fill-white" />
+              <span>WhatsApp</span>
+            </a>
+          </div>
+        </div>
       </div>
     </div>
   );

@@ -17,9 +17,17 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
   const [selectedImage, setSelectedImage] = useState<string>(
     product.images?.[0] || 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=800&auto=format&fit=crop'
   );
+  const isCake = product.categoryId === 'cat-cakes' || product.categorySlug === 'cakes';
+  const effectiveFlavorOptions = (product.flavorOptions || (isCake ? ['100% Eggless'] : []))
+    .filter((f) => !f.toLowerCase().includes('with egg') && f.toLowerCase() !== 'regular')
+    .map((f) => (f.toLowerCase().includes('eggless') ? '100% Eggless' : f));
+  if (isCake && effectiveFlavorOptions.length === 0) {
+    effectiveFlavorOptions.push('100% Eggless');
+  }
+
   const [quantity, setQuantity] = useState<number>(1);
   const [selectedWeight, setSelectedWeight] = useState<string | undefined>(product.weightOptions?.[0]);
-  const [selectedFlavor, setSelectedFlavor] = useState<string | undefined>(product.flavorOptions?.[0]);
+  const [selectedFlavor, setSelectedFlavor] = useState<string | undefined>(effectiveFlavorOptions[0] || (isCake ? '100% Eggless' : undefined));
   const [customMessage, setCustomMessage] = useState<string>('');
 
   const discountPercent =
@@ -117,6 +125,16 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
                 )}
               </div>
 
+              {/* 100% Eggless Vegetarian Guarantee */}
+              {isCake && (
+                <div className="mt-2.5 inline-flex items-center gap-2 px-2.5 py-1 rounded-lg bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold w-fit">
+                  <span className="w-3 h-3 border-2 border-emerald-700 p-0.5 flex items-center justify-center rounded-xs bg-white shrink-0">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-700"></span>
+                  </span>
+                  <span>100% Eggless • Pure Veg</span>
+                </div>
+              )}
+
               <p className="text-xs sm:text-sm text-gray-600 mt-3 leading-relaxed line-clamp-3">
                 {product.description}
               </p>
@@ -146,25 +164,28 @@ export const QuickViewModal: React.FC<QuickViewModalProps> = ({ product, onClose
                 </div>
               )}
 
-              {/* Flavor Options */}
-              {product.flavorOptions && product.flavorOptions.length > 0 && (
+              {/* Flavor / Baking Options */}
+              {effectiveFlavorOptions.length > 0 && (
                 <div className="mt-3">
                   <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1.5">
-                    Preference / Flavor
+                    {isCake ? 'Dietary / Baking Specification' : 'Preference / Flavor'}
                   </label>
                   <div className="flex flex-wrap gap-2">
-                    {product.flavorOptions.map((flavor) => (
+                    {effectiveFlavorOptions.map((flavor) => (
                       <button
                         key={flavor}
                         type="button"
                         onClick={() => setSelectedFlavor(flavor)}
-                        className={`px-3 py-1 rounded-lg text-xs font-semibold border transition-all ${
-                          selectedFlavor === flavor
-                            ? 'bg-[#831843] text-white border-[#831843]'
+                        className={`px-3 py-1 rounded-lg text-xs font-semibold border transition-all flex items-center gap-1.5 ${
+                          (selectedFlavor === flavor || (!selectedFlavor && flavor === '100% Eggless'))
+                            ? 'bg-emerald-700 text-white border-emerald-700 shadow-xs'
                             : 'bg-white text-gray-700 border-gray-200 hover:border-gray-400'
                         }`}
                       >
-                        {flavor}
+                        {flavor.toLowerCase().includes('eggless') && (
+                          <span className="w-1.5 h-1.5 rounded-full bg-white inline-block"></span>
+                        )}
+                        <span>{flavor}</span>
                       </button>
                     ))}
                   </div>

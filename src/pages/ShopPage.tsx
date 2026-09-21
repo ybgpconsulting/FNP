@@ -179,11 +179,7 @@ export const ShopPage: React.FC = () => {
         {/* Main Grid + Sidebar Layout */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-8">
           {/* Desktop Filter Sidebar */}
-          <aside
-            className={`${
-              showMobileFilters ? 'block' : 'hidden'
-            } md:block md:col-span-3 bg-white rounded-2xl p-5 border border-[#EADBDA] shadow-sm h-fit space-y-6`}
-          >
+          <aside className="hidden md:block md:col-span-3 bg-white rounded-2xl p-5 border border-[#EADBDA] shadow-sm h-fit space-y-6">
             <div className="flex items-center justify-between pb-3 border-b border-gray-100">
               <div className="flex items-center gap-2">
                 <Filter className="w-4 h-4 text-[#831843]" />
@@ -251,6 +247,93 @@ export const ShopPage: React.FC = () => {
               <p>Every cake is baked freshly on order. Flowers are arranged by master florists at our Sector 76 store.</p>
             </div>
           </aside>
+
+          {/* Mobile Filter Drawer Modal */}
+          {showMobileFilters && (
+            <div className="md:hidden fixed inset-0 z-50 bg-black/50 backdrop-blur-sm flex items-end justify-center">
+              <div className="bg-white w-full rounded-t-3xl max-h-[85vh] overflow-y-auto p-5 border-t border-gray-200 shadow-2xl animate-in slide-in-from-bottom duration-200">
+                <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+                  <div className="flex items-center gap-2">
+                    <Filter className="w-4 h-4 text-[#831843]" />
+                    <h3 className="font-serif text-lg font-bold text-gray-900">Filter Catalogue</h3>
+                  </div>
+                  <button
+                    onClick={() => setShowMobileFilters(false)}
+                    className="p-1.5 text-gray-400 hover:text-gray-600 rounded-full"
+                    aria-label="Close filters"
+                  >
+                    <X className="w-5 h-5" />
+                  </button>
+                </div>
+
+                <div className="space-y-6 py-4">
+                  {/* Price Filter Slider */}
+                  <div>
+                    <div className="flex justify-between text-xs font-bold text-gray-700 uppercase tracking-wider mb-2">
+                      <span>Max Budget</span>
+                      <span className="text-[#831843]">Up to ₹{maxPrice}</span>
+                    </div>
+                    <input
+                      type="range"
+                      min={300}
+                      max={3000}
+                      step={50}
+                      value={maxPrice}
+                      onChange={(e) => setMaxPrice(Number(e.target.value))}
+                      className="w-full accent-[#831843] cursor-pointer"
+                    />
+                    <div className="flex justify-between text-[10px] text-gray-400 mt-1">
+                      <span>₹300</span>
+                      <span>₹1,500</span>
+                      <span>₹3,000</span>
+                    </div>
+                  </div>
+
+                  {/* Collections Filter */}
+                  <div className="space-y-3 pt-2">
+                    <span className="block text-xs font-bold text-gray-700 uppercase tracking-wider">
+                      Special Collections
+                    </span>
+                    <label className="flex items-center gap-3 text-sm font-medium text-gray-800 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={featuredOnly}
+                        onChange={(e) => setFeaturedOnly(e.target.checked)}
+                        className="w-4 h-4 rounded text-[#831843] focus:ring-[#831843]"
+                      />
+                      <span>Featured Creations Only</span>
+                    </label>
+                    <label className="flex items-center gap-3 text-sm font-medium text-gray-800 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={bestsellerOnly}
+                        onChange={(e) => setBestsellerOnly(e.target.checked)}
+                        className="w-4 h-4 rounded text-[#831843] focus:ring-[#831843]"
+                      />
+                      <span>Bestsellers Only</span>
+                    </label>
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-gray-100 flex items-center gap-3">
+                  <button
+                    type="button"
+                    onClick={resetFilters}
+                    className="flex-1 py-3 border border-gray-200 rounded-xl text-xs font-bold text-gray-700 active:scale-95 transition-transform"
+                  >
+                    Reset All
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setShowMobileFilters(false)}
+                    className="flex-1 py-3 bg-[#831843] text-white rounded-xl text-xs font-bold shadow active:scale-95 transition-transform"
+                  >
+                    Show Results ({filteredProducts.length})
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Product Grid Area (4 per row desktop, 3 tablet, 2 mobile) */}
           <main className="md:col-span-9">

@@ -2,18 +2,20 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Default Deny Catch-All
+    // Default Deny Catch-All: Deny all read and write operations by default
     match /{document=**} {
       allow read, write: if false;
     }
 
-    // Helper functions
+    // Helper functions for authentication and role verification
     function isSignedIn() {
       return request.auth != null;
     }
 
     function isAdmin() {
       return isSignedIn() && (
+        request.auth.token.role == 'admin' ||
+        request.auth.token.admin == true ||
         exists(/databases/$(database)/documents/admins/$(request.auth.uid)) ||
         (request.auth.token.email != null && request.auth.token.email_verified == true && 
          request.auth.token.email in ['admin@fnpnoida76.com', 'ybgp.consulting@gmail.com'])
@@ -21,7 +23,7 @@ service cloud.firestore {
     }
 
     function isValidId(id) {
-      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+      return id is string && id.size() > 0 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
     }
 
     function incoming() {
@@ -43,10 +45,19 @@ service cloud.firestore {
              data.active is bool;
     }
 
-    function isValidSettings(data) {
-      return data.businessName is string && data.businessName.size() <= 150 &&
-             data.whatsappNumber is string && data.whatsappNumber.size() <= 30 &&
-             data.address is string && data.address.size() <= 300;
+    function isValidDeliverySettings(data) {
+      return data.storeLatitude is number &&
+             data.storeLongitude is number &&
+             data.radiusKm is number &&
+             data.radiusKm > 0;
+    }
+
+    function isValidSettings(settingId, data) {
+      return settingId == 'delivery' ? isValidDeliverySettings(data) : (
+        data.businessName is string && data.businessName.size() <= 150 &&
+        data.whatsappNumber is string && data.whatsappNumber.size() <= 30 &&
+        data.address is string && data.address.size() <= 300
+      );
     }
 
     function isValidHomepage(data) {
@@ -54,7 +65,7 @@ service cloud.firestore {
              data.heroSubtitle is string && data.heroSubtitle.size() <= 500;
     }
 
-    // Products: Public read, Admin write
+    // 1. Products: Public read, Admin-only write/update/delete
     match /products/{productId} {
       allow read: if true;
       allow create: if isAdmin() && isValidId(productId) && isValidProduct(incoming());
@@ -62,7 +73,7 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // Categories: Public read, Admin write
+    // 2. Categories: Public read, Admin-only write/update/delete
     match /categories/{categoryId} {
       allow read: if true;
       allow create: if isAdmin() && isValidId(categoryId) && isValidCategory(incoming());
@@ -70,30 +81,29 @@ service cloud.firestore {
       allow delete: if isAdmin();
     }
 
-    // Settings: Public read, Admin write
+    // 3. Settings: Public read, Admin-only write/update
     match /settings/{settingId} {
       allow read: if true;
-      allow create, update: if isAdmin() && isValidSettings(incoming());
+      allow create, update: if isAdmin() && isValidSettings(settingId, incoming());
       allow delete: if false;
     }
 
-    // Homepage CMS: Public read, Admin write
+    // 4. Homepage CMS: Public read, Admin-only write/update
     match /homepage/{docId} {
       allow read: if true;
       allow create, update: if isAdmin() && isValidHomepage(incoming());
       allow delete: if false;
     }
 
-    // Admins Collection: Only existing admins can read or manage
+    // 5. Admins Registry: Admin-only access
     match /admins/{adminId} {
       allow read: if isAdmin();
       allow write: if isAdmin();
     }
 
-    // Orders collection (Optional Future tracking): Customers can create order record, Admins can read/update
+    // 6. Orders: Completely disabled (privacy-preserving direct WhatsApp ordering flow)
     match /orders/{orderId} {
-      allow create: if isValidId(orderId) && incoming().totalAmount is number;
-      allow read, update, delete: if isAdmin();
+      allow read, write: if false;
     }
   }
 }

@@ -20,7 +20,7 @@ export interface Product {
   // Product options/attributes for future-readiness
   weightOptions?: string[]; // e.g. ['500g', '1kg', '2kg']
   selectedWeight?: string;
-  flavorOptions?: string[]; // e.g. ['Eggless', 'With Egg', 'Extra Truffle']
+  flavorOptions?: string[]; // e.g. ['100% Eggless']
   selectedFlavor?: string;
   allowCustomMessage?: boolean;
   customMessagePlaceholder?: string;
@@ -102,3 +102,43 @@ export interface RecordedOrder {
   notes?: string;
   createdAt: string;
 }
+
+export interface DeliverySettings {
+  enabled: boolean;
+  radiusKm: number;
+  storeName: string;
+  storeLatitude: number;
+  storeLongitude: number;
+  deliveryMessage: string;
+  minOrderValue?: number;
+  deliveryCharge?: number;
+  freeDeliveryThreshold?: number;
+  allowedPincodes?: string[];
+  specialDeliveryAreas?: string[];
+}
+
+export type DeliveryStatus = 'unknown' | 'checking' | 'available' | 'unavailable' | 'error';
+
+export interface VerifiedLocation {
+  verified: boolean;
+  latitude: number;
+  longitude: number;
+  distanceKm: number;
+  pincode?: string;
+  source: 'gps' | 'map' | 'manual';
+  addressText?: string;
+  checkedAt: number;
+}
+
+export interface CustomerDeliveryAddress {
+  name: string;
+  mobile: string;
+  houseFlat: string;
+  buildingSociety: string;
+  streetArea: string;
+  city: string;
+  state: string;
+  pincode: string;
+  deliveryInstructions: string;
+}
+

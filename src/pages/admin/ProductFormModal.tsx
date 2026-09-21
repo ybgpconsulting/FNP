@@ -49,7 +49,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
     product?.weightOptions?.join(', ') || '500g, 1kg, 1.5kg'
   );
   const [flavorOptionsStr, setFlavorOptionsStr] = useState(
-    product?.flavorOptions?.join(', ') || 'Eggless, With Egg'
+    product?.flavorOptions?.join(', ') || '100% Eggless'
   );
   const [allowCustomMessage, setAllowCustomMessage] = useState(
     product?.allowCustomMessage ?? true
@@ -149,7 +149,9 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
       const parsedFlavors = flavorOptionsStr
         .split(',')
         .map((f) => f.trim())
-        .filter(Boolean);
+        .filter(Boolean)
+        .filter((f) => !f.toLowerCase().includes('with egg') && f.toLowerCase() !== 'regular')
+        .map((f) => (f.toLowerCase().includes('eggless') ? '100% Eggless' : f));
 
       const updatedProduct: Product = {
         id: product?.id || `prod_${Date.now()}`,
@@ -440,7 +442,7 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
               </label>
               <input
                 type="text"
-                placeholder="Eggless, With Egg, Sugar-free"
+                placeholder="100% Eggless, Sugar-free"
                 value={flavorOptionsStr}
                 onChange={(e) => setFlavorOptionsStr(e.target.value)}
                 className="w-full px-3.5 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-xs focus:ring-2 focus:ring-[#831843] focus:outline-none"

@@ -2,16 +2,18 @@
   "entities": {
     "Product": {
       "title": "Product",
-      "description": "Bakery or floral product available in the catalogue",
+      "description": "Store catalogue item such as cakes, flowers, bouquets, gifts, plants, and hampers.",
       "type": "object",
       "properties": {
+        "id": { "type": "string", "maxLength": 128 },
         "name": { "type": "string", "maxLength": 150 },
-        "slug": { "type": "string", "pattern": "^[a-z0-9-]+$", "maxLength": 150 },
+        "slug": { "type": "string", "maxLength": 150 },
         "description": { "type": "string", "maxLength": 2000 },
         "price": { "type": "number" },
         "oldPrice": { "type": "number" },
         "categoryId": { "type": "string", "maxLength": 100 },
         "categoryName": { "type": "string", "maxLength": 100 },
+        "categorySlug": { "type": "string", "maxLength": 100 },
         "images": { "type": "array" },
         "featured": { "type": "boolean" },
         "bestseller": { "type": "boolean" },
@@ -20,7 +22,6 @@
         "weightOptions": { "type": "array" },
         "flavorOptions": { "type": "array" },
         "allowCustomMessage": { "type": "boolean" },
-        "customMessagePlaceholder": { "type": "string", "maxLength": 200 },
         "createdAt": { "type": "string" },
         "updatedAt": { "type": "string" }
       },
@@ -28,11 +29,12 @@
     },
     "Category": {
       "title": "Category",
-      "description": "Product collection category such as Cakes or Flowers",
+      "description": "Product category classification for store organisation.",
       "type": "object",
       "properties": {
+        "id": { "type": "string", "maxLength": 100 },
         "name": { "type": "string", "maxLength": 100 },
-        "slug": { "type": "string", "pattern": "^[a-z0-9-]+$", "maxLength": 100 },
+        "slug": { "type": "string", "maxLength": 100 },
         "description": { "type": "string", "maxLength": 1000 },
         "image": { "type": "string", "maxLength": 500 },
         "active": { "type": "boolean" },
@@ -40,53 +42,44 @@
       },
       "required": ["name", "slug", "active"]
     },
-    "Settings": {
+    "StoreSettings": {
       "title": "StoreSettings",
-      "description": "Store operational settings, WhatsApp details and contact info",
+      "description": "Operational information and contact channels for the store.",
       "type": "object",
       "properties": {
         "businessName": { "type": "string", "maxLength": 150 },
-        "phone": { "type": "string", "maxLength": 50 },
-        "whatsappNumber": { "type": "string", "maxLength": 20 },
-        "email": { "type": "string", "maxLength": 120 },
+        "phone": { "type": "string", "maxLength": 30 },
+        "whatsappNumber": { "type": "string", "maxLength": 30 },
+        "email": { "type": "string", "maxLength": 100 },
         "address": { "type": "string", "maxLength": 300 },
         "mapsUrl": { "type": "string", "maxLength": 500 },
-        "instagramUrl": { "type": "string", "maxLength": 300 },
-        "facebookUrl": { "type": "string", "maxLength": 300 },
-        "twitterUrl": { "type": "string", "maxLength": 300 },
-        "openingHours": { "type": "string", "maxLength": 200 },
-        "whatsappMessage": { "type": "string", "maxLength": 2000 },
-        "websiteTitle": { "type": "string", "maxLength": 150 },
-        "metaDescription": { "type": "string", "maxLength": 500 },
-        "logo": { "type": "string", "maxLength": 500 },
-        "bannerAnnouncement": { "type": "string", "maxLength": 300 }
+        "openingHours": { "type": "string", "maxLength": 200 }
       },
       "required": ["businessName", "whatsappNumber", "address"]
     },
-    "Homepage": {
+    "HomepageConfig": {
       "title": "HomepageConfig",
-      "description": "Dynamic homepage CMS blocks and banner content",
+      "description": "Configurable hero banners and promotions displayed on the homepage.",
       "type": "object",
       "properties": {
         "heroTitle": { "type": "string", "maxLength": 200 },
         "heroSubtitle": { "type": "string", "maxLength": 500 },
         "heroImage": { "type": "string", "maxLength": 500 },
-        "heroCtaText": { "type": "string", "maxLength": 50 },
-        "heroCtaLink": { "type": "string", "maxLength": 100 },
+        "heroCtaText": { "type": "string", "maxLength": 100 },
+        "heroCtaLink": { "type": "string", "maxLength": 200 },
         "promoBannerActive": { "type": "boolean" },
-        "promoBannerText": { "type": "string", "maxLength": 300 },
-        "whyUsPoints": { "type": "array" },
-        "footerNote": { "type": "string", "maxLength": 500 }
+        "promoBannerText": { "type": "string", "maxLength": 300 }
       },
-      "required": ["heroTitle", "heroSubtitle", "heroImage"]
+      "required": ["heroTitle", "heroSubtitle"]
     },
-    "Admin": {
-      "title": "Admin",
-      "description": "Authorized administrator user document",
+    "AdminUser": {
+      "title": "AdminUser",
+      "description": "Authorized administrator account.",
       "type": "object",
       "properties": {
+        "uid": { "type": "string", "maxLength": 128 },
         "email": { "type": "string", "maxLength": 150 },
-        "role": { "type": "string", "enum": ["admin", "superadmin"] },
+        "role": { "type": "string", "maxLength": 50 },
         "createdAt": { "type": "string" }
       },
       "required": ["email", "role"]
@@ -95,23 +88,23 @@
   "firestore": {
     "/products/{productId}": {
       "schema": "Product",
-      "description": "Store catalogue products"
+      "description": "Catalogue products accessible publicly for reading and manageable by store administrators."
     },
     "/categories/{categoryId}": {
       "schema": "Category",
-      "description": "Store catalogue categories"
+      "description": "Catalogue categories accessible publicly for reading and manageable by store administrators."
     },
     "/settings/{settingId}": {
-      "schema": "Settings",
-      "description": "Store settings singleton"
+      "schema": "StoreSettings",
+      "description": "Store operational metadata accessible publicly for reading and manageable by store administrators."
     },
     "/homepage/{docId}": {
-      "schema": "Homepage",
-      "description": "Homepage CMS configuration"
+      "schema": "HomepageConfig",
+      "description": "Homepage layout configuration accessible publicly for reading and manageable by store administrators."
     },
     "/admins/{adminId}": {
-      "schema": "Admin",
-      "description": "Admin users allowlist and roles"
+      "schema": "AdminUser",
+      "description": "Administrator registry controlling dashboard authorization boundaries."
     }
   }
 }

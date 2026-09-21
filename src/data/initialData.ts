@@ -104,7 +104,6 @@ export const INITIAL_PRODUCTS: Product[] = [
     available: true,
     displayOrder: 1,
     weightOptions: ['500g', '1kg', '1.5kg', '2kg'],
-    flavorOptions: ['100% Eggless', 'Regular With Egg'],
     allowCustomMessage: true,
     customMessagePlaceholder: 'E.g., Happy Birthday Rahul!',
     createdAt: '2026-01-10T10:00:00.000Z',
@@ -150,7 +149,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     available: true,
     displayOrder: 3,
     weightOptions: ['500g', '1kg', '2kg'],
-    flavorOptions: ['100% Eggless', 'Regular With Egg'],
+    flavorOptions: ['100% Eggless'],
     allowCustomMessage: true,
     customMessagePlaceholder: 'Message on Cake...',
     createdAt: '2026-01-12T10:00:00.000Z',
@@ -174,7 +173,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     available: true,
     displayOrder: 4,
     weightOptions: ['500g', '1kg', '1.5kg'],
-    flavorOptions: ['100% Eggless', 'Regular With Egg'],
+    flavorOptions: ['100% Eggless'],
     allowCustomMessage: true,
     customMessagePlaceholder: 'Your sweet message...',
     createdAt: '2026-01-13T10:00:00.000Z',
@@ -198,7 +197,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     available: true,
     displayOrder: 5,
     weightOptions: ['500g', '1kg'],
-    flavorOptions: ['100% Eggless', 'Regular With Egg'],
+    flavorOptions: ['100% Eggless'],
     allowCustomMessage: true,
     customMessagePlaceholder: 'Cake text...',
     createdAt: '2026-01-14T10:00:00.000Z',
@@ -386,3 +385,18 @@ export const OCCASIONS = [
     image: 'https://images.unsplash.com/photo-1549465220-1a8b9238cd48?q=80&w=600&auto=format&fit=crop',
   },
 ];
+
+export const INITIAL_DELIVERY_SETTINGS: import('../types').DeliverySettings = {
+  enabled: true,
+  radiusKm: 10,
+  storeName: 'FNP - Florist & Bakery in Noida Sector 76',
+  storeLatitude: 28.5672,
+  storeLongitude: 77.3845,
+  deliveryMessage: 'We deliver cakes, flowers, gifts & more within 10 km of our Sector 76, Noida store.',
+  minOrderValue: 0,
+  deliveryCharge: 0,
+  freeDeliveryThreshold: 0,
+  allowedPincodes: ['201301', '201304', '201305', '201306', '201307', '201308'],
+  specialDeliveryAreas: ['Sector 76', 'Sector 75', 'Sector 77', 'Sector 78', 'Sector 74', 'Sector 79', 'Sector 50', 'Sector 51', 'Sector 72', 'Sector 115', 'Sector 116', 'Sector 117', 'Sector 118', 'Sector 119', 'Sector 120', 'Sector 121', 'Sector 122'],
+};
+

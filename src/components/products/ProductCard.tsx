@@ -44,12 +44,13 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
         onMouseEnter={() => setIsHovered(true)}
         onMouseLeave={() => setIsHovered(false)}
       >
-        {/* Image Container with Consistent 1:1 / 4:3 Aspect Ratio */}
-        <Link to={`/product/${product.slug}`} className="relative block aspect-[4/3] sm:aspect-square overflow-hidden bg-[#FAF8F5]">
+        {/* Image Container with Consistent 1:1 Aspect Ratio */}
+        <Link to={`/product/${product.slug}`} className="relative block aspect-square overflow-hidden bg-[#FAF8F5]">
           <img
             src={isHovered && secondaryImage !== primaryImage ? secondaryImage : primaryImage}
             alt={product.name}
             loading="lazy"
+            decoding="async"
             className="w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
           />
 
@@ -68,6 +69,12 @@ export const ProductCard: React.FC<ProductCardProps> = ({ product }) => {
             {product.featured && !product.bestseller && (
               <span className="bg-[#047857] text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md shadow-sm">
                 Featured
+              </span>
+            )}
+            {(product.categoryId === 'cat-cakes' || product.categorySlug === 'cakes') && (
+              <span className="bg-emerald-700 text-white text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-md shadow-sm flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-white inline-block"></span>
+                100% Eggless
               </span>
             )}
           </div>

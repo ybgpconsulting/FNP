@@ -12,6 +12,7 @@ import {
   Settings,
   ShieldCheck,
   Store,
+  Truck,
   X,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
@@ -49,6 +50,7 @@ export const AdminLayout: React.FC = () => {
     { label: 'Products', path: '/admin/products', icon: <Package className="w-5 h-5" /> },
     { label: 'Categories', path: '/admin/categories', icon: <FolderTree className="w-5 h-5" /> },
     { label: 'Homepage Editor', path: '/admin/homepage', icon: <LayoutDashboard className="w-5 h-5" /> },
+    { label: 'Delivery Settings', path: '/admin/delivery', icon: <Truck className="w-5 h-5" /> },
     { label: 'Store Settings', path: '/admin/settings', icon: <Settings className="w-5 h-5" /> },
   ];
 

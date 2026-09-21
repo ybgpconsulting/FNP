@@ -15,6 +15,7 @@ import {
 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useStore } from '../../context/StoreContext';
+import { DeliveryLocationBadge } from '../delivery/DeliveryLocationBadge';
 
 export const Header: React.FC = () => {
   const { totalQuantity } = useCart();
@@ -59,21 +60,21 @@ export const Header: React.FC = () => {
       )}
 
       {/* Main Navbar */}
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-between h-20 gap-4">
+      <div className="max-w-7xl mx-auto px-3.5 sm:px-6 lg:px-8">
+        <div className="flex items-center justify-between h-16 sm:h-20 gap-2 sm:gap-4">
           {/* Logo & Local Identity */}
-          <Link to="/" className="flex items-center gap-3 group shrink-0">
-            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#831843] to-[#9D174D] flex items-center justify-center text-white shadow-sm ring-2 ring-[#FCE7F3] group-hover:scale-105 transition-transform">
-              <Store className="w-6 h-6" />
+          <Link to="/" className="flex items-center gap-2.5 sm:gap-3 group shrink-0">
+            <div className="w-9 h-9 sm:w-11 sm:h-11 rounded-full bg-gradient-to-br from-[#831843] to-[#9D174D] flex items-center justify-center text-white shadow-sm ring-2 ring-[#FCE7F3] group-hover:scale-105 transition-transform">
+              <Store className="w-5 h-5 sm:w-6 sm:h-6" />
             </div>
             <div className="flex flex-col">
-              <span className="font-serif text-2xl font-bold tracking-tight text-[#4A1525] group-hover:text-[#831843] transition-colors leading-none">
+              <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#4A1525] group-hover:text-[#831843] transition-colors leading-none">
                 FNP
               </span>
-              <span className="text-[11px] uppercase tracking-widest text-[#78350F] font-medium font-sans mt-0.5">
-                Florist & Bakery
+              <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-[#78350F] font-semibold font-sans mt-0.5">
+                Florist &amp; Bakery
               </span>
-              <span className="text-[10px] text-gray-500 font-normal">
+              <span className="text-[9px] sm:text-[10px] text-gray-500 font-medium">
                 Sector 76, Noida
               </span>
             </div>
@@ -167,8 +168,11 @@ export const Header: React.FC = () => {
             </Link>
           </nav>
 
-          {/* Right Header Actions: Search, Cart, WhatsApp CTA */}
-          <div className="flex items-center gap-2 sm:gap-3">
+          {/* Right Header Actions: Delivery Badge, Search, Cart, WhatsApp CTA */}
+          <div className="flex items-center gap-1.5 sm:gap-3">
+            {/* Delivery Location Status Badge */}
+            <DeliveryLocationBadge />
+
             {/* Search Button */}
             <button
               onClick={() => setShowSearchModal(true)}
@@ -300,35 +304,36 @@ export const Header: React.FC = () => {
         </div>
       )}
 
-      {/* Desktop Search Modal */}
+      {/* Search Modal (Responsive for Desktop & Mobile) */}
       {showSearchModal && (
-        <div className="fixed inset-0 bg-black/40 backdrop-blur-sm z-50 flex items-start justify-center pt-24 px-4">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-xl w-full p-6 border border-gray-100 animate-in fade-in zoom-in-95 duration-150">
-            <div className="flex items-center justify-between pb-4 border-b border-gray-100">
-              <h3 className="font-serif text-lg font-bold text-gray-900">Search Products</h3>
+        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-start justify-center pt-16 sm:pt-24 px-3 sm:px-4">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-xl w-full p-4 sm:p-6 border border-gray-100 animate-in fade-in zoom-in-95 duration-150">
+            <div className="flex items-center justify-between pb-3 border-b border-gray-100">
+              <h3 className="font-serif text-lg font-bold text-gray-900">Search Catalogue</h3>
               <button
                 onClick={() => setShowSearchModal(false)}
-                className="p-1 text-gray-400 hover:text-gray-600 rounded-full"
+                className="p-1.5 text-gray-400 hover:text-gray-600 rounded-full"
+                aria-label="Close search"
               >
                 <X className="w-5 h-5" />
               </button>
             </div>
 
-            <form onSubmit={handleSearch} className="mt-4">
+            <form onSubmit={handleSearch} className="mt-3">
               <div className="relative">
                 <input
                   type="text"
-                  placeholder="Type cake flavour, flower type, or gift item..."
+                  placeholder="Type cake flavour, flower type, or gifts..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   autoFocus
-                  className="w-full pl-12 pr-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl text-base focus:outline-none focus:ring-2 focus:ring-[#831843]"
+                  className="w-full pl-11 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm sm:text-base focus:outline-none focus:ring-2 focus:ring-[#831843]"
                 />
-                <Search className="w-6 h-6 text-gray-400 absolute left-4 top-3.5" />
+                <Search className="w-5 h-5 text-gray-400 absolute left-3.5 top-3.5" />
               </div>
 
-              <div className="mt-4 flex flex-wrap gap-2 text-xs">
-                <span className="text-gray-400 self-center">Popular:</span>
+              <div className="mt-3 flex flex-wrap gap-1.5 sm:gap-2 text-xs">
+                <span className="text-gray-400 self-center text-[11px]">Popular:</span>
                 {['Truffle Cake', 'Red Roses', 'Oreo Cake', 'Birthday Hamper', 'Lilies'].map((term) => (
                   <button
                     key={term}
@@ -337,7 +342,7 @@ export const Header: React.FC = () => {
                       navigate(`/shop?search=${encodeURIComponent(term)}`);
                       setShowSearchModal(false);
                     }}
-                    className="px-2.5 py-1 bg-gray-100 hover:bg-[#FDF2F8] hover:text-[#831843] rounded-full text-gray-600 transition-colors"
+                    className="px-2.5 py-1 bg-gray-100 hover:bg-[#FDF2F8] hover:text-[#831843] rounded-full text-gray-600 transition-colors text-xs active:scale-95"
                   >
                     {term}
                   </button>
@@ -346,9 +351,9 @@ export const Header: React.FC = () => {
 
               <button
                 type="submit"
-                className="mt-5 w-full py-3 bg-[#831843] hover:bg-[#6b1336] text-white font-medium rounded-xl text-sm transition-colors"
+                className="mt-4 w-full py-3 bg-[#831843] hover:bg-[#6b1336] active:scale-98 text-white font-medium rounded-xl text-sm transition-all shadow-md"
               >
-                Search Catalogue
+                Search Products
               </button>
             </form>
           </div>

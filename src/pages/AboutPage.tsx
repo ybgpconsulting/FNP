@@ -88,7 +88,7 @@ export const AboutPage: React.FC = () => {
             </div>
             <h3 className="font-serif text-lg font-bold text-gray-900">Personalized Service</h3>
             <p className="text-xs text-gray-600">
-              Custom weight, eggless preferences, hand-piped celebratory messages and personalized cards.
+              Custom weight, 100% pure eggless baking, hand-piped celebratory messages and personalized cards.
             </p>
           </div>
         </div>

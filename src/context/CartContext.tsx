@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
-import { CartItem, Product, StoreSettings } from '../types';
+import { CartItem, CustomerDeliveryAddress, Product, StoreSettings, VerifiedLocation } from '../types';
+import { formatDistanceKm, getGoogleMapsLocationUrl } from '../utils/distance';
 
 interface CartContextType {
   cart: CartItem[];
@@ -17,7 +18,15 @@ interface CartContextType {
   totalQuantity: number;
   toastMessage: string | null;
   hideToast: () => void;
-  generateWhatsAppOrderUrl: (settings: StoreSettings, customerNotes?: string) => string;
+  generateWhatsAppOrderUrl: (
+    settings: StoreSettings,
+    customerNotes?: string,
+    deliveryPayload?: {
+      customerAddress?: CustomerDeliveryAddress;
+      verifiedLocation?: VerifiedLocation | null;
+      radiusKm?: number;
+    }
+  ) => string;
   generateSingleProductWhatsAppUrl: (
     product: Product,
     settings: StoreSettings,
@@ -68,6 +77,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     selectedFlavor?: string,
     customMessage?: string
   ) => {
+    const safeQuantity = Math.max(1, Math.min(99, Math.floor(quantity || 1)));
+    const sanitizedProduct: Product = {
+      ...product,
+      price: Math.max(0, Number(product.price) || 0),
+    };
+
     setCart((prev) => {
       // Find if identical product with exact same variations already in cart
       const existingIndex = prev.findIndex(
@@ -80,14 +95,14 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
       if (existingIndex > -1) {
         const updated = [...prev];
-        updated[existingIndex].quantity += quantity;
+        updated[existingIndex].quantity = Math.min(99, updated[existingIndex].quantity + safeQuantity);
         return updated;
       } else {
         return [
           ...prev,
           {
-            product,
-            quantity,
+            product: sanitizedProduct,
+            quantity: safeQuantity,
             selectedWeight,
             selectedFlavor,
             customMessage,
@@ -104,14 +119,15 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
   };
 
   const updateQuantity = (index: number, quantity: number) => {
-    if (quantity <= 0) {
+    const safeQuantity = Math.floor(quantity);
+    if (safeQuantity <= 0) {
       removeFromCart(index);
       return;
     }
     setCart((prev) => {
       const updated = [...prev];
       if (updated[index]) {
-        updated[index].quantity = quantity;
+        updated[index].quantity = Math.min(99, safeQuantity);
       }
       return updated;
     });
@@ -121,13 +137,24 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     setCart([]);
   };
 
-  const subtotal = cart.reduce((sum, item) => sum + item.product.price * item.quantity, 0);
-  const totalQuantity = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const subtotal = cart.reduce(
+    (sum, item) => sum + Math.max(0, Number(item.product.price) || 0) * Math.max(1, Math.floor(item.quantity) || 1),
+    0
+  );
+  const totalQuantity = cart.reduce((sum, item) => sum + Math.max(1, Math.floor(item.quantity) || 1), 0);
 
   /**
    * Generates the compliant WhatsApp Order message and returns the wa.me URL
    */
-  const generateWhatsAppOrderUrl = (settings: StoreSettings, customerNotes = ''): string => {
+  const generateWhatsAppOrderUrl = (
+    settings: StoreSettings,
+    customerNotes = '',
+    deliveryPayload?: {
+      customerAddress?: CustomerDeliveryAddress;
+      verifiedLocation?: VerifiedLocation | null;
+      radiusKm?: number;
+    }
+  ): string => {
     const rawNumber = settings.whatsappNumber || '919999517599';
     // Clean phone number: remove +, -, spaces
     const cleanNumber = rawNumber.replace(/[^0-9]/g, '');
@@ -136,7 +163,12 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     const productLines = cart.map((item, index) => {
       const optionsParts = [];
       if (item.selectedWeight) optionsParts.push(`Weight: ${item.selectedWeight}`);
-      if (item.selectedFlavor) optionsParts.push(`Type: ${item.selectedFlavor}`);
+      if (item.selectedFlavor) {
+        const flavorClean = item.selectedFlavor.toLowerCase().includes('egg') ? '100% Eggless' : item.selectedFlavor;
+        optionsParts.push(`Type: ${flavorClean}`);
+      } else if (item.product.categoryId === 'cat-cakes' || item.product.categorySlug === 'cakes') {
+        optionsParts.push(`Type: 100% Eggless`);
+      }
       if (item.customMessage) optionsParts.push(`Message on Cake/Card: "${item.customMessage}"`);
       const optionsText = optionsParts.length > 0 ? `\n   (${optionsParts.join(', ')})` : '';
 
@@ -145,22 +177,63 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
 
     const productsBlock = productLines.join('\n\n');
-    const notesBlock = customerNotes.trim() || 'Sector 76, Noida';
+
+    let deliveryBlock = '';
+    const addr = deliveryPayload?.customerAddress;
+    const loc = deliveryPayload?.verifiedLocation;
+    const radius = deliveryPayload?.radiusKm || 10;
+
+    if (addr) {
+      const distFormatted = loc ? formatDistanceKm(loc.distanceKm) : 'Within standard range';
+      const mapsUrl = loc ? getGoogleMapsLocationUrl(loc.latitude, loc.longitude) : '';
+
+      deliveryBlock = `DELIVERY DETAILS
+
+Customer Name: ${addr.name}
+Mobile: ${addr.mobile}
+
+Address:
+House/Flat: ${addr.houseFlat}
+Society/Building: ${addr.buildingSociety}
+Area: ${addr.streetArea}
+City: ${addr.city}
+State: ${addr.state}
+Pincode: ${addr.pincode}
+${
+  loc
+    ? `
+Delivery Location:
+Latitude: ${loc.latitude.toFixed(6)}
+Longitude: ${loc.longitude.toFixed(6)}
+
+Distance from FNP Store:
+${distFormatted}
+
+Delivery Status:
+Verified – Within ${radius} km
+
+Google Maps Location:
+${mapsUrl}
+`
+    : ''
+}`;
+    }
+
+    const notesBlock = customerNotes.trim()
+      ? `Special Instructions / Notes:\n${customerNotes.trim()}`
+      : '';
 
     // Generate formatted message matching prompt specs
-    const message = `Hi, I would like to place an order from FNP Florist & Bakery (Sector 76 Noida).
+    const messageParts = [
+      'Hi, I would like to place an order from FNP Florist & Bakery (Sector 76 Noida).',
+      deliveryBlock,
+      `Order Details:\n\n${productsBlock}`,
+      `Total: ₹${subtotal}`,
+      notesBlock,
+      'Please confirm product availability and delivery details.',
+    ].filter(Boolean);
 
-Order Details:
-
-${productsBlock}
-
-Total: ₹${subtotal}
-
-Delivery Address / Notes:
-${notesBlock}
-
-Please confirm product availability and delivery details.`;
-
+    const message = messageParts.join('\n\n');
     const encoded = encodeURIComponent(message);
     return `https://wa.me/${cleanNumber}?text=${encoded}`;
   };
@@ -181,7 +254,12 @@ Please confirm product availability and delivery details.`;
 
     const optionsParts = [];
     if (weight) optionsParts.push(`Weight: ${weight}`);
-    if (flavor) optionsParts.push(`Type: ${flavor}`);
+    if (flavor) {
+      const flavorClean = flavor.toLowerCase().includes('egg') ? '100% Eggless' : flavor;
+      optionsParts.push(`Type: ${flavorClean}`);
+    } else if (product.categoryId === 'cat-cakes' || product.categorySlug === 'cakes') {
+      optionsParts.push(`Type: 100% Eggless`);
+    }
     if (customMessage) optionsParts.push(`Message: "${customMessage}"`);
     const optionsText = optionsParts.length > 0 ? `\n   (${optionsParts.join(', ')})` : '';
 

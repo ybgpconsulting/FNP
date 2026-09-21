@@ -59,7 +59,6 @@ const LS_PRODUCTS_KEY = 'fnp_noida76_products_v1';
 const LS_CATEGORIES_KEY = 'fnp_noida76_categories_v1';
 const LS_SETTINGS_KEY = 'fnp_noida76_settings_v1';
 const LS_HOMEPAGE_KEY = 'fnp_noida76_homepage_v1';
-const LS_ORDERS_KEY = 'fnp_noida76_orders_v1';
 
 // Seed initial data into localStorage if empty
 function initLocalStorage() {
@@ -80,6 +79,25 @@ initLocalStorage();
 
 // ===================== PRODUCTS =====================
 
+export function sanitizeProductEggless(prod: Product): Product {
+  if (prod.flavorOptions && prod.flavorOptions.length > 0) {
+    const cleaned = prod.flavorOptions
+      .filter((opt) => !opt.toLowerCase().includes('with egg') && opt.toLowerCase() !== 'regular')
+      .map((opt) => (opt.toLowerCase().includes('eggless') ? '100% Eggless' : opt));
+    return {
+      ...prod,
+      flavorOptions: cleaned.length > 0 ? cleaned : ['100% Eggless'],
+    };
+  }
+  if (prod.categoryId === 'cat-cakes') {
+    return {
+      ...prod,
+      flavorOptions: ['100% Eggless'],
+    };
+  }
+  return prod;
+}
+
 export async function fetchProducts(): Promise<Product[]> {
   if (isFirebaseConfigured() && db) {
     try {
@@ -88,9 +106,9 @@ export async function fetchProducts(): Promise<Product[]> {
       if (snapshot.empty) {
         // First-time seed into live Firestore
         await seedFirestoreIfEmpty();
-        return INITIAL_PRODUCTS;
+        return INITIAL_PRODUCTS.map(sanitizeProductEggless);
       }
-      return snapshot.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<Product, 'id'>) }));
+      return snapshot.docs.map((d) => sanitizeProductEggless({ id: d.id, ...(d.data() as Omit<Product, 'id'>) }));
     } catch (err) {
       console.warn('Firestore fetchProducts fallback to local data:', err);
       // Fallback
@@ -98,7 +116,8 @@ export async function fetchProducts(): Promise<Product[]> {
   }
 
   const raw = localStorage.getItem(LS_PRODUCTS_KEY);
-  return raw ? JSON.parse(raw) : INITIAL_PRODUCTS;
+  const list: Product[] = raw ? JSON.parse(raw) : INITIAL_PRODUCTS;
+  return list.map(sanitizeProductEggless);
 }
 
 export async function fetchProductBySlug(slug: string): Promise<Product | null> {
@@ -108,7 +127,7 @@ export async function fetchProductBySlug(slug: string): Promise<Product | null> 
       const snapshot = await getDocs(q);
       if (!snapshot.empty) {
         const docSnap = snapshot.docs[0];
-        return { id: docSnap.id, ...(docSnap.data() as Omit<Product, 'id'>) };
+        return sanitizeProductEggless({ id: docSnap.id, ...(docSnap.data() as Omit<Product, 'id'>) });
       }
     } catch (err) {
       console.warn('Firestore fetchProductBySlug error, using fallback:', err);
@@ -277,47 +296,15 @@ export async function saveHomepageConfig(config: HomepageConfig): Promise<void> 
   localStorage.setItem(LS_HOMEPAGE_KEY, JSON.stringify(config));
 }
 
-// ===================== ORDERS LOG (Optional Tracking) =====================
-
-export async function logWhatsAppOrder(order: Omit<RecordedOrder, 'id' | 'createdAt'>): Promise<string> {
-  const orderId = 'ord_' + Date.now().toString(36) + Math.random().toString(36).substring(2, 6);
-  const fullOrder: RecordedOrder = {
-    ...order,
-    id: orderId,
-    createdAt: new Date().toISOString(),
-  };
-
-  if (isFirebaseConfigured() && db) {
-    try {
-      await setDoc(doc(db, 'orders', orderId), fullOrder);
-    } catch (err) {
-      console.warn('Could not write order log to Firestore (non-fatal):', err);
-    }
-  }
-
-  const existingRaw = localStorage.getItem(LS_ORDERS_KEY);
-  const orders: RecordedOrder[] = existingRaw ? JSON.parse(existingRaw) : [];
-  orders.unshift(fullOrder);
-  localStorage.setItem(LS_ORDERS_KEY, JSON.stringify(orders.slice(0, 100)));
-
-  return orderId;
+// ===================== ORDERS LOG (Disabled for Privacy) =====================
+// Customer privacy is protected: orders are conducted directly via WhatsApp.
+// Zero customer PII is stored in Firestore or localStorage.
+export async function logWhatsAppOrder(_order: Omit<RecordedOrder, 'id' | 'createdAt'>): Promise<string> {
+  return 'wa_' + Date.now().toString(36);
 }
 
 export async function fetchRecordedOrders(): Promise<RecordedOrder[]> {
-  if (isFirebaseConfigured() && db) {
-    try {
-      const q = query(collection(db, 'orders'), orderBy('createdAt', 'desc'));
-      const snapshot = await getDocs(q);
-      if (!snapshot.empty) {
-        return snapshot.docs.map((d) => ({ id: d.id, ...(d.data() as Omit<RecordedOrder, 'id'>) }));
-      }
-    } catch (err) {
-      console.warn('Could not read orders from Firestore (non-fatal):', err);
-    }
-  }
-
-  const raw = localStorage.getItem(LS_ORDERS_KEY);
-  return raw ? JSON.parse(raw) : [];
+  return [];
 }
 
 // ===================== SEED DATA HELPER =====================

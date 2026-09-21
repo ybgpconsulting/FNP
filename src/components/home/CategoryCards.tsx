@@ -29,7 +29,7 @@ export const CategoryCards: React.FC = () => {
             <Link
               key={category.id}
               to={`/category/${category.slug}`}
-              className="group relative flex flex-col items-center bg-white rounded-2xl p-3 sm:p-4 border border-[#ECE2DC] hover:border-[#D1B8B3] hover:shadow-[0_8px_25px_rgba(131,24,67,0.08)] transition-all duration-300"
+              className="group relative flex flex-col items-center bg-white rounded-2xl p-3 sm:p-4 border border-[#ECE2DC] hover:border-[#D1B8B3] hover:shadow-[0_8px_25px_rgba(131,24,67,0.08)] active:scale-95 transition-all duration-300"
             >
               {/* Image Circle with zoom */}
               <div className="relative w-full aspect-square rounded-xl overflow-hidden bg-[#F7F2EE] mb-3">
@@ -37,6 +37,7 @@ export const CategoryCards: React.FC = () => {
                   src={category.image}
                   alt={category.name}
                   loading="lazy"
+                  decoding="async"
                   className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500 ease-out"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/20 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />

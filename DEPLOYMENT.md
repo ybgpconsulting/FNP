@@ -119,13 +119,34 @@ Firebase Hosting provides fast global CDN delivery, automated SSL certificates, 
 
 ---
 
-## 6. Store Administrator First-Time Setup
+## 6. Store Administrator Production Setup
 
-1. Navigate to `/admin` on your website.
-2. Sign in with the registered administrator email:
-   - Default: `admin@fnpnoida76.com` / Password: `admin123`
-3. Update store information under **Store Settings**:
-   - Verify phone number: `+91 9999517599`
-   - Verify WhatsApp recipient number: `919999517599`
-   - Confirm Google Maps link and store address.
-4. Add or customize products, upload high-resolution photos, and set availability tags.
+1. **Create the Admin Account in Firebase**:
+   - Go to the **Firebase Console** -> **Authentication** -> **Users** tab.
+   - Click **Add User**.
+   - Enter your designated store administrator email (e.g., `admin@fnpnoida76.com` or your business email) and a strong, secure password.
+   - Note the generated user `UID`.
+
+2. **Grant Administrator Privileges**:
+   - Go to **Firestore Database** -> **admins** collection.
+   - Create a new document with the Document ID set to the user's `UID`:
+     ```json
+     {
+       "email": "admin@fnpnoida76.com",
+       "role": "superadmin",
+       "createdAt": "2026-03-30T00:00:00.000Z"
+     }
+     ```
+   - Alternatively, users with verified emails matching `VITE_ADMIN_EMAIL` have authorization enforced by security rules.
+
+3. **Log In to Admin Dashboard**:
+   - Navigate to `/admin` or `/admin/login` on your production URL.
+   - Enter your administrator credentials.
+   - Once authenticated, you will be redirected to `/admin/products`.
+
+4. **Verify Store Operations**:
+   - Navigate to **Store Settings** in the dashboard.
+   - Confirm official business phone: `+91 9999517599`
+   - Confirm WhatsApp recipient number: `919999517599`
+   - Verify store address: `Shop No. 29, Ground Floor, Amrapali Crystal Home, Shopping Arcade, near Mithaas, Amrapali Silicon City, Sector 76, Noida, Uttar Pradesh 201301`
+   - Confirm Google Maps link and operating hours.
