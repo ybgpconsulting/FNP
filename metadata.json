@@ -1,0 +1,6 @@
+{
+  "name": "FNP - Florist & Bakery in Noida Sector 76",
+  "description": "Cakes, fresh flowers, plants and premium gift hampers in Sector 76, Noida with doorstep delivery and direct WhatsApp ordering.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

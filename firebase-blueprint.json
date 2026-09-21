@@ -1,0 +1,117 @@
+{
+  "entities": {
+    "Product": {
+      "title": "Product",
+      "description": "Bakery or floral product available in the catalogue",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 150 },
+        "slug": { "type": "string", "pattern": "^[a-z0-9-]+$", "maxLength": 150 },
+        "description": { "type": "string", "maxLength": 2000 },
+        "price": { "type": "number" },
+        "oldPrice": { "type": "number" },
+        "categoryId": { "type": "string", "maxLength": 100 },
+        "categoryName": { "type": "string", "maxLength": 100 },
+        "images": { "type": "array" },
+        "featured": { "type": "boolean" },
+        "bestseller": { "type": "boolean" },
+        "available": { "type": "boolean" },
+        "displayOrder": { "type": "number" },
+        "weightOptions": { "type": "array" },
+        "flavorOptions": { "type": "array" },
+        "allowCustomMessage": { "type": "boolean" },
+        "customMessagePlaceholder": { "type": "string", "maxLength": 200 },
+        "createdAt": { "type": "string" },
+        "updatedAt": { "type": "string" }
+      },
+      "required": ["name", "slug", "description", "price", "categoryId", "available"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "Product collection category such as Cakes or Flowers",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string", "maxLength": 100 },
+        "slug": { "type": "string", "pattern": "^[a-z0-9-]+$", "maxLength": 100 },
+        "description": { "type": "string", "maxLength": 1000 },
+        "image": { "type": "string", "maxLength": 500 },
+        "active": { "type": "boolean" },
+        "displayOrder": { "type": "number" }
+      },
+      "required": ["name", "slug", "active"]
+    },
+    "Settings": {
+      "title": "StoreSettings",
+      "description": "Store operational settings, WhatsApp details and contact info",
+      "type": "object",
+      "properties": {
+        "businessName": { "type": "string", "maxLength": 150 },
+        "phone": { "type": "string", "maxLength": 50 },
+        "whatsappNumber": { "type": "string", "maxLength": 20 },
+        "email": { "type": "string", "maxLength": 120 },
+        "address": { "type": "string", "maxLength": 300 },
+        "mapsUrl": { "type": "string", "maxLength": 500 },
+        "instagramUrl": { "type": "string", "maxLength": 300 },
+        "facebookUrl": { "type": "string", "maxLength": 300 },
+        "twitterUrl": { "type": "string", "maxLength": 300 },
+        "openingHours": { "type": "string", "maxLength": 200 },
+        "whatsappMessage": { "type": "string", "maxLength": 2000 },
+        "websiteTitle": { "type": "string", "maxLength": 150 },
+        "metaDescription": { "type": "string", "maxLength": 500 },
+        "logo": { "type": "string", "maxLength": 500 },
+        "bannerAnnouncement": { "type": "string", "maxLength": 300 }
+      },
+      "required": ["businessName", "whatsappNumber", "address"]
+    },
+    "Homepage": {
+      "title": "HomepageConfig",
+      "description": "Dynamic homepage CMS blocks and banner content",
+      "type": "object",
+      "properties": {
+        "heroTitle": { "type": "string", "maxLength": 200 },
+        "heroSubtitle": { "type": "string", "maxLength": 500 },
+        "heroImage": { "type": "string", "maxLength": 500 },
+        "heroCtaText": { "type": "string", "maxLength": 50 },
+        "heroCtaLink": { "type": "string", "maxLength": 100 },
+        "promoBannerActive": { "type": "boolean" },
+        "promoBannerText": { "type": "string", "maxLength": 300 },
+        "whyUsPoints": { "type": "array" },
+        "footerNote": { "type": "string", "maxLength": 500 }
+      },
+      "required": ["heroTitle", "heroSubtitle", "heroImage"]
+    },
+    "Admin": {
+      "title": "Admin",
+      "description": "Authorized administrator user document",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string", "maxLength": 150 },
+        "role": { "type": "string", "enum": ["admin", "superadmin"] },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["email", "role"]
+    }
+  },
+  "firestore": {
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Store catalogue products"
+    },
+    "/categories/{categoryId}": {
+      "schema": "Category",
+      "description": "Store catalogue categories"
+    },
+    "/settings/{settingId}": {
+      "schema": "Settings",
+      "description": "Store settings singleton"
+    },
+    "/homepage/{docId}": {
+      "schema": "Homepage",
+      "description": "Homepage CMS configuration"
+    },
+    "/admins/{adminId}": {
+      "schema": "Admin",
+      "description": "Admin users allowlist and roles"
+    }
+  }
+}
