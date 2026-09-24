@@ -10,7 +10,7 @@ export async function optimizeImage(file: File, maxWidth = 1200, quality = 0.85)
 
 export async function uploadProductImage(file: File, folder = 'products'): Promise<string> {
   try {
-    const optimized = await optimizeImage(file); const form = new FormData(); form.append('file', optimized, file.name); form.append('folder', folder);
+    const optimized = await optimizeImage(file); const form = new FormData(); form.append('file', optimized, `${file.name.replace(/\.[^.]+$/, '')}.jpg`); form.append('folder', folder);
     const response = await fetch(`${API_BASE}/api/media/upload`, { method: 'POST', body: form, credentials: 'include' });
     if (!response.ok) { const payload = await response.json().catch(() => null) as { error?: string } | null; throw new Error(payload?.error || 'Image upload failed.'); }
     return (await response.json() as { url: string }).url;

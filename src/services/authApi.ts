@@ -17,7 +17,7 @@ export async function loginAdminWithCredentials(email: string, password: string)
 }
 
 export async function logoutAdminUser(): Promise<void> { await request('auth/logout', { method: 'POST' }).catch(() => undefined); sessionStorage.removeItem(SESSION_KEY); }
-export async function resetAdminPassword(email: string): Promise<void> { await request('auth/reset', { method: 'POST', body: JSON.stringify({ email }) }); }
+export async function resetAdminPassword(_email: string): Promise<void> { throw new Error('Password reset is not configured. Contact the store administrator.'); }
 export function getStoredAdminUser(): AdminUser | null { try { const raw = sessionStorage.getItem(SESSION_KEY); return raw ? JSON.parse(raw) as AdminUser : null; } catch { return null; } }
 
 export function subscribeToAuthChanges(callback: (user: AdminUser | null) => void): () => void {
