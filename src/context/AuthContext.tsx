@@ -5,7 +5,7 @@ import {
   logoutAdminUser,
   resetAdminPassword,
   subscribeToAuthChanges,
-} from '../firebase/authService';
+} from '../services/authApi';
 import { AdminUser } from '../types';
 
 interface AuthContextType {

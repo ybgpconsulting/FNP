@@ -1,155 +1,83 @@
-# Deployment Guide - FNP Florist & Bakery (Sector 76, Noida)
+# Cloudflare Deployment Guide
 
-This document provides production deployment instructions for **FNP - Florist & Bakery in Noida Sector 76**.
+The application is a Cloudflare Worker serving the Vite SPA, a D1 database for catalogue/content, and an R2 bucket for images. No Firebase credentials are used by the frontend or Worker.
 
----
+## Prerequisites
 
-## 1. Environment Configuration
+Install and authenticate Wrangler:
 
-Before deploying, create your `.env` (or configure Environment Variables in your hosting provider dashboard):
-
-```env
-# Firebase Configuration (From your Firebase Console Project Settings)
-VITE_FIREBASE_API_KEY=your_firebase_api_key
-VITE_FIREBASE_AUTH_DOMAIN=your_project.firebaseapp.com
-VITE_FIREBASE_PROJECT_ID=your_project_id
-VITE_FIREBASE_STORAGE_BUCKET=your_project.appspot.com
-VITE_FIREBASE_MESSAGING_SENDER_ID=your_sender_id
-VITE_FIREBASE_APP_ID=your_app_id
-
-# Admin Access Credentials
-VITE_ADMIN_EMAIL=admin@fnpnoida76.com
-
-# Development-only local admin password (used when Firebase is not configured)
-VITE_LOCAL_ADMIN_PASSWORD=admin123
-
-# Store Contact Defaults
-VITE_DEFAULT_STORE_PHONE="+91 9999517599"
-VITE_DEFAULT_WHATSAPP_NUMBER="919999517599"
+```bash
+npm install
+npm run wrangler -- login
 ```
 
-> **Development note**: When Firebase is not configured, Vite development mode uses browser-local storage for catalogue data and a local admin account. The default local credentials are `admin@fnpnoida76.com` / `admin123`; set `VITE_LOCAL_ADMIN_PASSWORD` to change the password. This local mode is disabled in production builds.
+On Windows paths containing `&`, use the repository scripts (`npm run deploy`, `npm run db:migrate`) because they invoke Wrangler through Node directly.
 
----
+## Create Cloudflare resources
 
-## 2. Deploying to Firebase Hosting
+```bash
+npm run wrangler -- d1 create fnp-noida76
+npm run wrangler -- r2 bucket create fnp-noida76-media
+```
 
-Firebase Hosting provides fast global CDN delivery, automated SSL certificates, and direct integration with Firestore security rules:
+Copy the D1 database ID into `wrangler.toml` in place of `REPLACE_WITH_D1_DATABASE_ID`.
 
-1. **Install Firebase CLI**:
-   ```bash
-   npm install -g firebase-tools
-   ```
+Apply the schema locally or remotely:
 
-2. **Login to Firebase**:
-   ```bash
-   firebase login
-   ```
+```bash
+npm run db:migrate
+npm run db:migrate -- --remote
+```
 
-3. **Initialize Firebase in Project Directory**:
-   ```bash
-   firebase init
-   ```
-   - Select **Firestore**, **Hosting**, and **Storage**.
-   - Public directory: `dist`
-   - Configure as single-page app (SPA): `Yes` (rewrite all URLs to `/index.html`)
-   - Set up automatic builds and deploys with GitHub: (Optional)
+The first public API request seeds products, categories, store settings, delivery settings, and homepage content from the existing catalogue defaults if the products table is empty.
 
-4. **Deploy Firestore Rules**:
-   ```bash
-   firebase deploy --only firestore:rules
-   ```
+## Configure admin authentication
 
-5. **Build and Deploy the App**:
-   ```bash
-   npm run build
-   firebase deploy --only hosting
-   ```
+The Worker never receives Firebase credentials and never exposes R2 credentials. Set a strong password hash and signing secret as Wrangler secrets.
 
----
+Generate a PBKDF2 hash:
 
-## 3. Deploying to Vercel
+```bash
+node scripts/hash-admin-password.mjs
+```
 
-1. Push your code to your GitHub / GitLab repository.
-2. Sign in to [Vercel](https://vercel.com) and click **Add New Project**.
-3. Import the repository.
-4. Set the Build and Output settings:
-   - **Framework Preset**: Vite
-   - **Build Command**: `npm run build`
-   - **Output Directory**: `dist`
-5. In **Environment Variables**, add the keys from `.env.example`.
-6. Click **Deploy**.
-7. Single-Page Application rewrites are handled automatically by `vercel.json`:
-   ```json
-   {
-     "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
-   }
-   ```
+Then configure the Worker:
 
----
+```bash
+npm run wrangler -- secret put ADMIN_PASSWORD_HASH
+npm run wrangler -- secret put SESSION_SECRET
+```
 
-## 4. Deploying to Hostinger (cPanel / Business Web Hosting)
+`ADMIN_EMAIL` is a non-secret variable in `wrangler.toml`; edit it before deployment if needed. The browser receives only an HttpOnly, Secure, SameSite session cookie after login.
 
-1. Run the production build command locally or in CI:
-   ```bash
-   npm run build
-   ```
-2. Navigate to your Hostinger **hPanel** -> **File Manager**.
-3. Open the `public_html` directory of your domain.
-4. Upload all files from your local `dist/` directory into `public_html`.
-5. Create or verify the `.htaccess` file in `public_html` to handle client-side routing (React Router):
-   ```apache
-   <IfModule mod_rewrite.c>
-     RewriteEngine On
-     RewriteBase /
-     RewriteRule ^index\.html$ - [L]
-     RewriteCond %{REQUEST_FILENAME} !-f
-     RewriteCond %{REQUEST_FILENAME} !-d
-     RewriteRule . /index.html [L]
-   </IfModule>
-   ```
-6. Ensure HTTPS is forced via Hostinger's Free SSL certificate section.
+## Build and deploy
 
----
+```bash
+npm run lint
+npm run build
+npm run deploy
+```
 
-## 5. Connecting a Custom Domain
+`wrangler.toml` maps `dist/` to Worker static assets, configures SPA fallback, binds D1 as `DB`, and binds R2 as `MEDIA`. Public reads are available under `/api/products`, `/api/categories`, `/api/settings/store`, `/api/settings/delivery`, and `/api/homepage/config`. Admin writes and media operations require the admin session.
 
-1. In your domain registrar (e.g. GoDaddy, Namecheap, Google Domains):
-   - Add **A Records** pointing to your host IP.
-   - Add **CNAME Record**: `www` pointing to `@` or your hosting URL.
-2. Complete domain verification in your hosting panel (Firebase, Vercel, or Hostinger).
-3. Update `robots.txt` and `sitemap.xml` with your final production domain name.
+## Local development
 
----
+Build first, then run the Worker with bindings:
 
-## 6. Store Administrator Production Setup
+```bash
+npm run build
+npm run dev:worker
+```
 
-1. **Create the Admin Account in Firebase**:
-   - Go to the **Firebase Console** -> **Authentication** -> **Users** tab.
-   - Click **Add User**.
-   - Enter your designated store administrator email (e.g., `admin@fnpnoida76.com` or your business email) and a strong, secure password.
-   - Note the generated user `UID`.
+The Vite-only command (`npm run dev`) is still available for UI work and uses cached public data when the Worker API is not running. To use a separately hosted API, set `VITE_API_BASE_URL` in `.env`.
 
-2. **Grant Administrator Privileges**:
-   - Go to **Firestore Database** -> **admins** collection.
-   - Create a new document with the Document ID set to the user's `UID`:
-     ```json
-     {
-       "email": "admin@fnpnoida76.com",
-       "role": "superadmin",
-       "createdAt": "2026-03-30T00:00:00.000Z"
-     }
-     ```
-   - Alternatively, users with verified emails matching `VITE_ADMIN_EMAIL` have authorization enforced by security rules.
+## Custom domain and verification
 
-3. **Log In to Admin Dashboard**:
-   - Navigate to `/admin` or `/admin/login` on your production URL.
-   - Enter your administrator credentials.
-   - Once authenticated, you will be redirected to `/admin/products`.
+Attach the Worker to the production domain in Cloudflare Workers & Pages. Confirm:
 
-4. **Verify Store Operations**:
-   - Navigate to **Store Settings** in the dashboard.
-   - Confirm official business phone: `+91 9999517599`
-   - Confirm WhatsApp recipient number: `919999517599`
-   - Verify store address: `Shop No. 29, Ground Floor, Amrapali Crystal Home, Shopping Arcade, near Mithaas, Amrapali Silicon City, Sector 76, Noida, Uttar Pradesh 201301`
-   - Confirm Google Maps link and operating hours.
+- `/`, `/shop`, and `/admin/login` load through SPA fallback.
+- Public catalogue and category reads return data from D1.
+- Admin login creates a session and unauthorized write/upload requests return `401`.
+- Product image upload, gallery deletion, and `/media/...` delivery work through R2.
+- Delivery-radius settings save and are reflected on the storefront.
+- WhatsApp links, sitemap, robots file, and SEO metadata point to the production domain.

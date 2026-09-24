@@ -16,7 +16,7 @@ import {
   saveHomepageConfig,
   saveProduct,
   saveStoreSettings,
-} from '../firebase/firestoreService';
+} from '../services/storeApi';
 import { Category, HomepageConfig, Product, StoreSettings } from '../types';
 
 interface StoreContextType {

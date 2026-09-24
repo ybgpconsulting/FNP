@@ -1,30 +1,16 @@
-import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { INITIAL_DELIVERY_SETTINGS } from '../data/initialData';
-import { db, isFirebaseConfigured } from '../firebase/config';
-import { handleFirestoreError, OperationType } from '../firebase/firestoreService';
+import { fetchDeliverySettings as fetchCloudDeliverySettings, saveDeliverySettings as saveCloudDeliverySettings } from './storeApi';
 import { DeliverySettings, VerifiedLocation } from '../types';
 
 const LS_DELIVERY_SETTINGS_KEY = 'fnp_noida76_delivery_settings_v1';
 const SS_VERIFIED_LOCATION_KEY = 'fnp_noida76_verified_location_v1';
 
 /**
- * Fetches the delivery settings from Firestore (settings/delivery).
+ * Fetches delivery settings from the Cloudflare API.
  * Falls back to localStorage or INITIAL_DELIVERY_SETTINGS if offline/unconfigured.
  */
 export async function fetchDeliverySettings(): Promise<DeliverySettings> {
-  if (isFirebaseConfigured() && db) {
-    try {
-      const docRef = doc(db, 'settings', 'delivery');
-      const docSnap = await getDoc(docRef);
-      if (docSnap.exists()) {
-        const data = docSnap.data() as DeliverySettings;
-        localStorage.setItem(LS_DELIVERY_SETTINGS_KEY, JSON.stringify(data));
-        return data;
-      }
-    } catch (err) {
-      console.warn('Firestore fetchDeliverySettings warning, falling back:', err);
-    }
-  }
+  try { return await fetchCloudDeliverySettings(); } catch (err) { console.warn('Cloudflare fetchDeliverySettings warning, falling back:', err); }
 
   const cached = localStorage.getItem(LS_DELIVERY_SETTINGS_KEY);
   if (cached) {
@@ -47,19 +33,11 @@ export async function fetchDeliverySettings(): Promise<DeliverySettings> {
 }
 
 /**
- * Saves updated delivery settings to Firestore (settings/delivery)
+ * Saves updated delivery settings through the Cloudflare API.
  * Requires authenticated admin permissions.
  */
 export async function saveDeliverySettings(settings: DeliverySettings): Promise<void> {
-  if (isFirebaseConfigured() && db) {
-    try {
-      const docRef = doc(db, 'settings', 'delivery');
-      await setDoc(docRef, settings);
-    } catch (err) {
-      handleFirestoreError(err, OperationType.WRITE, 'settings/delivery');
-    }
-  }
-
+  await saveCloudDeliverySettings(settings);
   localStorage.setItem(LS_DELIVERY_SETTINGS_KEY, JSON.stringify(settings));
 }
 

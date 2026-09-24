@@ -1,0 +1,25 @@
+name = "fnp-noida76"
+main = "worker/index.ts"
+compatibility_date = "2026-09-24"
+
+[assets]
+directory = "./dist"
+not_found_handling = "single-page-application"
+binding = "ASSETS"
+
+[[d1_databases]]
+binding = "DB"
+database_name = "fnp-noida76"
+database_id = "d1ba94f2-427d-41d1-8cc1-51c8f1911034"
+migrations_dir = "migrations"
+
+[[r2_buckets]]
+binding = "MEDIA"
+bucket_name = "fnp-noida76-media"
+
+[vars]
+ADMIN_EMAIL = "admin@fnpnoida76.com"
+
+# Set these with `wrangler secret put`, never in this file:
+# ADMIN_PASSWORD_HASH = "pbkdf2_sha256$100000$base64url-salt$base64url-hash"
+# SESSION_SECRET = "a-long-random-secret"

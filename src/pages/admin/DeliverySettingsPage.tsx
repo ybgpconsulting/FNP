@@ -41,7 +41,7 @@ export const DeliverySettingsPage: React.FC = () => {
       setTimeout(() => setSaveSuccess(false), 3500);
     } catch (err: any) {
       console.error('Failed to save delivery settings', err);
-      setSaveError(err.message || 'Failed to update delivery settings in Firestore.');
+      setSaveError(err.message || 'Failed to update delivery settings.');
     } finally {
       setSaving(false);
     }
@@ -122,7 +122,7 @@ export const DeliverySettingsPage: React.FC = () => {
       {saveSuccess && (
         <div className="p-4 rounded-2xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-xs font-bold flex items-center gap-2 shadow-sm animate-in fade-in">
           <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-          <span>Delivery settings updated successfully in Firestore &amp; applied to live storefront!</span>
+          <span>Delivery settings updated successfully and applied to the live storefront!</span>
         </div>
       )}
 

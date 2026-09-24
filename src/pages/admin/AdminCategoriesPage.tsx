@@ -13,7 +13,7 @@ import {
 } from 'lucide-react';
 import { SEO } from '../../components/common/SEO';
 import { useStore } from '../../context/StoreContext';
-import { uploadProductImage } from '../../firebase/storageService';
+import { uploadProductImage } from '../../services/mediaApi';
 import { Category } from '../../types';
 
 export const AdminCategoriesPage: React.FC = () => {

@@ -11,7 +11,7 @@ import {
   Upload,
   X,
 } from 'lucide-react';
-import { uploadProductImage } from '../../firebase/storageService';
+import { deleteProductImage, mediaKeyFromUrl, uploadProductImage } from '../../services/mediaApi';
 import { Category, Product } from '../../types';
 
 interface ProductFormModalProps {
@@ -87,8 +87,11 @@ export const ProductFormModal: React.FC<ProductFormModalProps> = ({
     }
   };
 
-  const handleRemoveImage = (index: number) => {
+  const handleRemoveImage = async (index: number) => {
+    const image = images[index];
     setImages((prev) => prev.filter((_, i) => i !== index));
+    const key = mediaKeyFromUrl(image);
+    if (key) await deleteProductImage(key).catch((error) => console.warn('Could not delete R2 image:', error));
   };
 
   const handleSetPrimary = (index: number) => {

@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { CheckCircle2, LayoutDashboard, Loader2, Save, Sparkles, Upload } from 'lucide-react';
 import { SEO } from '../../components/common/SEO';
 import { useStore } from '../../context/StoreContext';
-import { uploadProductImage } from '../../firebase/storageService';
+import { uploadProductImage } from '../../services/mediaApi';
 import { HomepageConfig } from '../../types';
 import { safeCtaUrl, safeImageUrl } from '../../utils/urls';
 

@@ -143,7 +143,7 @@ export const AdminLoginPage: React.FC = () => {
 
           <div className="mt-6 pt-5 border-t border-gray-100 flex items-center gap-2 text-xs text-gray-500">
             <ShieldAlert className="w-4 h-4 text-gray-400 shrink-0" />
-            <span>Authorized access only. All authentication attempts are verified via Firebase security policies.</span>
+            <span>Authorized access only. All authentication attempts are verified by the secure store administrator service.</span>
           </div>
         </div>
       </div>

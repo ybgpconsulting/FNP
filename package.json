@@ -6,6 +6,10 @@
   "scripts": {
     "dev": "node node_modules/vite/bin/vite.js --port=3000 --host=0.0.0.0",
     "build": "node node_modules/vite/bin/vite.js build",
+    "dev:worker": "node node_modules/wrangler/bin/wrangler.js dev",
+    "wrangler": "node node_modules/wrangler/bin/wrangler.js",
+    "deploy": "node node_modules/wrangler/bin/wrangler.js deploy",
+    "db:migrate": "node node_modules/wrangler/bin/wrangler.js d1 migrations apply fnp-noida76",
     "preview": "vite preview",
     "clean": "rm -rf dist server.js",
     "lint": "node node_modules/typescript/bin/tsc --noEmit"
@@ -17,7 +21,6 @@
     "@vitejs/plugin-react": "^6.1.1",
     "dotenv": "^17.2.3",
     "express": "^4.21.2",
-    "firebase": "^12.19.0",
     "leaflet": "^1.9.4",
     "lucide-react": "^0.546.0",
     "motion": "^12.23.24",
@@ -35,6 +38,8 @@
     "tailwindcss": "^4.3.3",
     "tsx": "^4.21.0",
     "typescript": "^7.0.2",
-    "@types/express": "^4.17.21"
+    "@types/express": "^4.17.21",
+    "@cloudflare/workers-types": "^5.20260924.1",
+    "wrangler": "^4.38.0"
   }
 }
