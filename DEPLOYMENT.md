@@ -17,7 +17,7 @@ On Windows paths containing `&`, use the repository scripts (`npm run deploy`, `
 
 ```bash
 npm run wrangler -- d1 create fnp-noida76
-npm run wrangler -- r2 bucket create fnp-noida76-media
+npm run wrangler -- r2 bucket create cakesnmore-media
 ```
 
 Copy the D1 database ID into `wrangler.toml` in place of `REPLACE_WITH_D1_DATABASE_ID`.

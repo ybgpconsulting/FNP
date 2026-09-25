@@ -15,7 +15,7 @@ migrations_dir = "migrations"
 
 [[r2_buckets]]
 binding = "MEDIA"
-bucket_name = "fnp-noida76-media"
+bucket_name = "cakesnmore-media"
 
 [vars]
 ADMIN_EMAIL = "admin@fnpnoida76.com"
