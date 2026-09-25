@@ -10,8 +10,8 @@ interface SEOProps {
 }
 
 export const SEO: React.FC<SEOProps> = ({
-  title = 'FNP Florist & Bakery in Sector 76 Noida | Cakes, Flowers & Gifts',
-  description = 'Freshly prepared cakes, exotic flower bouquets, indoor plants and luxury gift hampers in Sector 76, Noida. Doorstep delivery and easy WhatsApp ordering.',
+  title = 'Cakes N More in Sector 76 Noida | Cakes, Flowers & Gifts',
+  description = 'Freshly prepared cakes, exotic flower bouquets, indoor plants and luxury gift hampers from Cakes N More in Sector 76, Noida. Doorstep delivery and easy WhatsApp ordering.',
   canonical,
   image = 'https://images.unsplash.com/photo-1578985545062-69928b1d9587?q=80&w=1200&auto=format&fit=crop',
   type = 'website',

@@ -44,7 +44,7 @@ export const CategoryPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#FAF8F5] py-8 sm:py-12">
       <SEO
-        title={`${currentCategory.name} Delivery in Sector 76 Noida | FNP Florist & Bakery`}
+        title={`${currentCategory.name} Delivery in Sector 76 Noida | Cakes N More`}
         description={`Order fresh ${currentCategory.name.toLowerCase()} in Sector 76, Noida. ${currentCategory.description} Handcrafted and delivered with love via WhatsApp order.`}
       />
 

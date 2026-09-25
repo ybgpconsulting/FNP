@@ -67,7 +67,7 @@ export const AdminProductsPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <SEO title="Product Management | FNP Admin" />
+      <SEO title="Product Management | Cakes N More Admin" />
 
       {/* Header Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-[#EADBDA] shadow-sm">

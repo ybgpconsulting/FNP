@@ -1,5 +1,5 @@
 /**
- * Core TypeScript definitions for FNP Florist & Bakery (Sector 76 Noida)
+ * Core TypeScript definitions for Cakes N More (Sector 76 Noida)
  */
 
 export interface Product {

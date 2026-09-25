@@ -3,20 +3,20 @@ import { Category, HomepageConfig, Product, StoreSettings } from '../types';
 export const STORE_MAPS_URL = 'https://maps.app.goo.gl/L3ho27w9k3hGw7pL8';
 
 export const INITIAL_SETTINGS: StoreSettings = {
-  businessName: 'FNP - Florist & Bakery in Noida Sector 76',
+  businessName: 'Cakes N More',
   phone: '+91 9999517599',
   whatsappNumber: '919999517599',
-  email: 'orders@fnpnoida76.com',
+  email: 'hello@cakesnmore.in',
   address: 'Shop No. 29, Ground Floor, Amrapali Crystal Home, Shopping Arcade, near Mithaas, Amrapali Silicon City, Sector 76, Noida, Uttar Pradesh 201301',
   mapsUrl: STORE_MAPS_URL,
-  instagramUrl: 'https://instagram.com/fnp_noida76',
-  facebookUrl: 'https://facebook.com/fnpnoida76',
-  twitterUrl: 'https://twitter.com/fnpnoida76',
+  instagramUrl: 'https://instagram.com/cakesnmore_noida',
+  facebookUrl: 'https://facebook.com/cakesnmore.noida',
+  twitterUrl: 'https://twitter.com/cakesnmore_noida',
   zomatoUrl: '',
   swiggyUrl: '',
   magicpinUrl: '',
   openingHours: 'Mon - Sun: 09:00 AM - 11:00 PM (Same Day Delivery Available)',
-  whatsappMessage: `Hi, I would like to place an order from FNP Florist & Bakery (Sector 76, Noida).
+  whatsappMessage: `Hi, I would like to place an order from Cakes N More (Sector 76, Noida).
 
 Order Details:
 {PRODUCTS}
@@ -27,8 +27,8 @@ Delivery Address / Notes:
 {NOTES}
 
 Please confirm availability and delivery time.`,
-  websiteTitle: 'FNP Florist & Bakery in Sector 76 Noida | Cakes, Flowers & Gifts',
-  metaDescription: 'Freshly prepared cakes, exotic flower bouquets, indoor plants and luxury gift hampers from FNP Sector 76, Noida. Doorstep delivery and easy WhatsApp ordering.',
+  websiteTitle: 'Cakes N More in Sector 76 Noida | Cakes, Flowers & Gifts',
+  metaDescription: 'Freshly prepared cakes, exotic flower bouquets, indoor plants and luxury gift hampers from Cakes N More in Sector 76, Noida. Doorstep delivery and easy WhatsApp ordering.',
   logo: '',
   bannerAnnouncement: '🌸 Same-Day Fresh Cake & Flower Delivery in Sector 76 & Central Noida | Order Directly on WhatsApp!',
 };
@@ -391,7 +391,7 @@ export const OCCASIONS = [
 export const INITIAL_DELIVERY_SETTINGS: import('../types').DeliverySettings = {
   enabled: true,
   radiusKm: 10,
-  storeName: 'FNP - Florist & Bakery in Noida Sector 76',
+  storeName: 'Cakes N More',
   storeLatitude: 28.5672,
   storeLongitude: 77.3845,
   deliveryMessage: 'We deliver cakes, flowers, gifts & more within 10 km of our Sector 76, Noida store.',

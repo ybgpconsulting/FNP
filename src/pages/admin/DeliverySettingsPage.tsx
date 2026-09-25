@@ -82,7 +82,7 @@ export const DeliverySettingsPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <SEO title="Delivery Settings | FNP Admin" />
+      <SEO title="Delivery Settings | Cakes N More Admin" />
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-[#EADBDA] shadow-sm">
@@ -197,7 +197,7 @@ export const DeliverySettingsPage: React.FC = () => {
         <div className="bg-white rounded-3xl p-6 sm:p-8 border border-[#EADBDA] shadow-sm space-y-6">
           <div className="flex items-center justify-between pb-4 border-b border-gray-100 flex-wrap gap-3">
             <div>
-              <h2 className="font-serif text-lg font-bold text-gray-900">FNP Store GPS Coordinates</h2>
+              <h2 className="font-serif text-lg font-bold text-gray-900">Cakes N More Store GPS Coordinates</h2>
               <p className="text-xs text-gray-500">
                 The 10 km radius is calculated strictly from these exact store coordinates.
               </p>
@@ -387,9 +387,9 @@ export const DeliverySettingsPage: React.FC = () => {
       {showMapModal && (
         <div role="dialog" aria-modal="true" aria-labelledby="store-location-modal-title" className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
           <div className="bg-white rounded-3xl p-6 max-w-xl w-full shadow-2xl border border-gray-200">
-            <h2 id="store-location-modal-title" className="sr-only">Select FNP Store Location</h2>
+            <h2 id="store-location-modal-title" className="sr-only">Select Cakes N More Store Location</h2>
             <LocationPicker
-              title="Select FNP Store Location"
+              title="Select Cakes N More Store Location"
               storeLat={formData.storeLatitude}
               storeLon={formData.storeLongitude}
               radiusKm={formData.radiusKm}

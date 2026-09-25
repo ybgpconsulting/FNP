@@ -19,6 +19,7 @@ import { CartPage } from './pages/CartPage';
 import { CategoryPage } from './pages/CategoryPage';
 import { ContactPage } from './pages/ContactPage';
 import { HomePage } from './pages/HomePage';
+import { LegalPage } from './pages/LegalPage';
 import { ProductDetailPage } from './pages/ProductDetailPage';
 import { ShopPage } from './pages/ShopPage';
 
@@ -41,6 +42,10 @@ export default function App() {
                   <Route path="cart" element={<CartPage />} />
                   <Route path="about" element={<AboutPage />} />
                   <Route path="contact" element={<ContactPage />} />
+                  <Route path="privacy-policy" element={<LegalPage page="privacy" />} />
+                  <Route path="terms-and-conditions" element={<LegalPage page="terms" />} />
+                  <Route path="shipping-and-delivery" element={<LegalPage page="shipping" />} />
+                  <Route path="returns-policy" element={<LegalPage page="returns" />} />
                 </Route>
 
                 {/* Admin Portal Routes */}

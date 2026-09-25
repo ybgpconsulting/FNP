@@ -22,7 +22,7 @@ export const DeliveryResult: React.FC<DeliveryResultProps> = ({
   const cleanPhone = (settings as any).whatsappNumber || '919999517599';
 
   const whatsappInquiryUrl = `https://wa.me/${cleanPhone.replace(/[^0-9]/g, '')}?text=${encodeURIComponent(
-    `Hi FNP Sector 76 Noida, I am checking delivery for my location (approx ${formattedDist} away). Can you deliver cakes/flowers to my area?`
+    `Hi Cakes N More Sector 76 Noida, I am checking delivery for my location (approx ${formattedDist} away). Can you deliver cakes/flowers to my area?`
   )}`;
 
   if (isAvailable) {
@@ -47,7 +47,7 @@ export const DeliveryResult: React.FC<DeliveryResultProps> = ({
           </p>
           <div className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#FAF8F5] border border-[#EADBDA] text-xs font-semibold text-[#831843]">
             <MapPin className="w-3.5 h-3.5 shrink-0" />
-            <span>{settings.storeName || 'FNP – Sector 76, Noida'}</span>
+            <span>{settings.storeName || 'Cakes N More – Sector 76, Noida'}</span>
           </div>
         </div>
 

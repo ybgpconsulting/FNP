@@ -51,7 +51,7 @@ export const AdminLoginPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-[#FAF8F5] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
-      <SEO title="Admin Login | FNP Florist & Bakery Sector 76 Noida" />
+      <SEO title="Admin Login | Cakes N More Sector 76 Noida" />
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md text-center">
         <div className="w-14 h-14 rounded-2xl bg-[#831843] text-white flex items-center justify-center mx-auto shadow-md mb-4">
@@ -61,7 +61,7 @@ export const AdminLoginPage: React.FC = () => {
           Store Management Portal
         </h1>
         <p className="mt-1 text-sm text-gray-600">
-          FNP Florist &amp; Bakery • Sector 76, Noida
+          Cakes N More • Sector 76, Noida
         </p>
       </div>
 
@@ -90,7 +90,7 @@ export const AdminLoginPage: React.FC = () => {
                 <input
                   type="email"
                   required
-                  placeholder="admin@fnpnoida76.com"
+                  placeholder="admin@cakesnmore.in"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-[#831843] focus:outline-none"
@@ -160,7 +160,7 @@ export const AdminLoginPage: React.FC = () => {
               <input
                 type="email"
                 required
-                placeholder="admin@fnpnoida76.com"
+                placeholder="admin@cakesnmore.in"
                 value={resetEmail}
                 onChange={(e) => setResetEmail(e.target.value)}
                 className="w-full px-3 py-2 bg-gray-50 border border-gray-200 rounded-xl text-sm"

@@ -67,7 +67,7 @@ export const AdminLayout: React.FC = () => {
           </div>
           <div>
             <h2 className="font-serif text-lg font-bold tracking-tight leading-none text-white">
-              FNP Admin
+              Cakes N More Admin
             </h2>
             <p className="text-[11px] text-[#E8A598] font-medium mt-1">
               Sector 76 Noida
@@ -125,7 +125,7 @@ export const AdminLayout: React.FC = () => {
           <div className="w-8 h-8 rounded-lg bg-[#831843] flex items-center justify-center">
             <Store className="w-4 h-4" />
           </div>
-          <span className="font-serif font-bold text-sm">FNP Sector 76 Admin</span>
+          <span className="font-serif font-bold text-sm">Cakes N More Admin</span>
         </div>
         <button
           onClick={() => setMobileNavOpen(!mobileNavOpen)}

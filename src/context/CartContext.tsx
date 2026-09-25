@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from 'react';
 import { CartItem, CustomerDeliveryAddress, Product, StoreSettings, VerifiedLocation } from '../types';
 import { formatDistanceKm, getGoogleMapsLocationUrl } from '../utils/distance';
+import { useStore } from './StoreContext';
 
 interface CartContextType {
   cart: CartItem[];
@@ -66,6 +67,7 @@ function readStoredCart(): CartItem[] {
 }
 
 export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const { products } = useStore();
   const [cart, setCart] = useState<CartItem[]>(() => {
     return readStoredCart();
   });
@@ -79,6 +81,21 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
       console.warn('Could not save cart to localStorage', e);
     }
   }, [cart]);
+
+  useEffect(() => {
+    const currentProducts = new Map(products.map((product) => [product.id, product]));
+    setCart((previous) => {
+      const reconciled = previous.flatMap((item) => {
+        const currentProduct = currentProducts.get(item.product.id);
+        if (!currentProduct || !currentProduct.available) return [];
+        return [{ ...item, product: currentProduct }];
+      });
+      const unchanged = reconciled.length === previous.length && reconciled.every(
+        (item, index) => item.product === previous[index].product
+      );
+      return unchanged ? previous : reconciled;
+    });
+  }, [products]);
 
   const showToast = (message: string) => {
     setToastMessage(message);
@@ -219,7 +236,7 @@ Delivery Location:
 Latitude: ${loc.latitude.toFixed(6)}
 Longitude: ${loc.longitude.toFixed(6)}
 
-Distance from FNP Store:
+Distance from Cakes N More Store:
 ${distFormatted}
 
 Delivery Status:
@@ -238,7 +255,7 @@ ${mapsUrl}
 
     // Generate formatted message matching prompt specs
     const messageParts = [
-      'Hi, I would like to place an order from FNP Florist & Bakery (Sector 76 Noida).',
+      'Hi, I would like to place an order from Cakes N More (Sector 76 Noida).',
       deliveryBlock,
       `Order Details:\n\n${productsBlock}`,
       `Total: ₹${subtotal}`,
@@ -274,7 +291,7 @@ ${mapsUrl}
 
     const total = product.price * quantity;
 
-    const message = `Hi, I would like to order directly from FNP Florist & Bakery (Sector 76 Noida).
+    const message = `Hi, I would like to order directly from Cakes N More (Sector 76 Noida).
 
 Product: ${product.name}${optionsText}
 Quantity: ${quantity}

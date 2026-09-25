@@ -22,7 +22,7 @@ export const WhyChooseUs: React.FC = () => {
         <div className="text-center max-w-2xl mx-auto mb-12 sm:mb-16">
           <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#FCE7F3] text-[#831843] text-xs font-bold uppercase tracking-wider mb-2">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>The FNP Promise</span>
+            <span>The Cakes N More Promise</span>
           </div>
           <h2 className="font-serif text-3xl sm:text-4xl font-extrabold text-[#29141B]">
             Why Sector 76 Chooses Us

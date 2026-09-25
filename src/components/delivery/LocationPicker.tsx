@@ -97,7 +97,7 @@ export const LocationPicker: React.FC<LocationPickerProps> = ({
 
     // Store Marker with Popup
     const storeMarker = L.marker([storeLat, storeLon], { icon: storeIcon }).addTo(map);
-    storeMarker.bindPopup('<strong>FNP Sector 76 Store</strong><br/>Shop 29, Crystal Home').openPopup();
+    storeMarker.bindPopup('<strong>Cakes N More Sector 76 Store</strong><br/>Shop 29, Crystal Home').openPopup();
 
     // User Selected Location Marker (Draggable)
     const userMarker = L.marker([startLat, startLon], {

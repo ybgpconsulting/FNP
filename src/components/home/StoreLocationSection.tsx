@@ -10,7 +10,7 @@ export const StoreLocationSection: React.FC = () => {
   const cleanPhone = settings.phone.replace(/[^0-9+]/g, '') || '+919999517599';
   const cleanWhatsApp = settings.whatsappNumber.replace(/[^0-9]/g, '') || '919999517599';
   const whatsappUrl = `https://wa.me/${cleanWhatsApp}?text=${encodeURIComponent(
-    'Hi, I would like to visit or order from FNP Florist & Bakery at Shop 29, Amrapali Crystal Home, Sector 76 Noida.'
+    'Hi, I would like to visit or order from Cakes N More at Shop 29, Amrapali Crystal Home, Sector 76 Noida.'
   )}`;
 
   return (
@@ -27,7 +27,7 @@ export const StoreLocationSection: React.FC = () => {
 
               <div>
                 <h2 className="font-serif text-3xl sm:text-4xl font-extrabold text-[#29141B] tracking-tight">
-                  FNP - Florist &amp; Bakery
+                  Cakes N More
                 </h2>
                 <p className="text-base sm:text-lg font-semibold text-[#831843] mt-1">
                   Sector 76, Noida • Uttar Pradesh

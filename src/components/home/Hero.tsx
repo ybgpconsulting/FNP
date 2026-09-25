@@ -10,7 +10,7 @@ export const Hero: React.FC = () => {
 
   const cleanWhatsAppNumber = settings.whatsappNumber.replace(/[^0-9]/g, '') || '919999517599';
   const whatsappUrl = `https://wa.me/${cleanWhatsAppNumber}?text=${encodeURIComponent(
-    'Hi FNP Florist & Bakery! I would like to place an order for fresh cakes/flowers in Sector 76, Noida.'
+    'Hi Cakes N More! I would like to place an order for fresh cakes/flowers in Sector 76, Noida.'
   )}`;
 
   return (

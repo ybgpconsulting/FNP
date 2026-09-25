@@ -101,7 +101,7 @@ export const ProductDetailPage: React.FC = () => {
         : 'https://schema.org/OutOfStock',
       seller: {
         '@type': 'LocalBusiness',
-        name: 'FNP Florist & Bakery Noida Sector 76',
+        name: 'Cakes N More Noida Sector 76',
       },
     },
   };
@@ -109,7 +109,7 @@ export const ProductDetailPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#FAF8F5] pt-4 pb-28 sm:py-12">
       <SEO
-        title={`${product.name} in Sector 76 Noida | FNP Florist & Bakery`}
+        title={`${product.name} in Sector 76 Noida | Cakes N More`}
         description={`Order ${product.name} freshly prepared in Sector 76 Noida. ₹${product.price}. Same-day delivery, personalized message options, and fast WhatsApp order confirmation.`}
         image={product.images?.[0]}
         schema={productSchema}

@@ -10,8 +10,8 @@ export const AboutPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#FAF8F5] py-12 sm:py-16">
       <SEO
-        title="About Us | FNP Florist & Bakery Noida Sector 76"
-        description="Learn about FNP Florist & Bakery in Sector 76 Noida. Your neighborhood boutique bakery, flower shop and luxury gift studio at Amrapali Crystal Home."
+        title="About Us | Cakes N More Noida Sector 76"
+        description="Learn about Cakes N More in Sector 76 Noida. Your neighborhood boutique bakery, flower shop and luxury gift studio at Amrapali Crystal Home."
       />
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 space-y-12">
@@ -25,7 +25,7 @@ export const AboutPage: React.FC = () => {
             Crafting Sweet Moments &amp; Fresh Blooms
           </h1>
           <p className="text-base sm:text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
-            Welcome to FNP Florist &amp; Bakery, located at Shop 29, Ground Floor, Amrapali Crystal Home, Sector 76, Noida.
+            Welcome to Cakes N More, located at Shop 29, Ground Floor, Amrapali Crystal Home, Sector 76, Noida.
           </p>
         </div>
 

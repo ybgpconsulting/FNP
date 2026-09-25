@@ -105,7 +105,7 @@ export const AdminCategoriesPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <SEO title="Category Management | FNP Admin" />
+      <SEO title="Category Management | Cakes N More Admin" />
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-[#EADBDA] shadow-sm">

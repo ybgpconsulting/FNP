@@ -104,7 +104,7 @@ export const DeliveryAvailabilityGate: React.FC = () => {
               <Sparkles className="w-4 h-4 text-amber-300" />
             </div>
             <div>
-              <span className="font-serif font-extrabold tracking-wider text-base">FNP</span>
+              <span className="font-serif font-extrabold tracking-wider text-base">Cakes N More</span>
               <span className="text-[10px] text-pink-200 block -mt-1 uppercase tracking-widest">
                 Sector 76 Noida
               </span>
@@ -183,7 +183,7 @@ export const DeliveryAvailabilityGate: React.FC = () => {
 
                 <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-xl bg-[#FAF8F5] border border-[#EADBDA] text-xs font-semibold text-gray-700">
                   <MapPin className="w-3.5 h-3.5 text-[#831843]" />
-                  <span>{deliverySettings.storeName || 'FNP – Sector 76, Noida'}</span>
+                  <span>{deliverySettings.storeName || 'Cakes N More – Sector 76, Noida'}</span>
                 </div>
               </div>
 

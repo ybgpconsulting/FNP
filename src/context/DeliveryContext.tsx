@@ -63,18 +63,15 @@ export const DeliveryProvider: React.FC<{ children: React.ReactNode }> = ({ chil
     return stored.verified ? 'available' : 'unavailable';
   });
 
-  // Determine whether gate should be open initially
+  // Keep the site open for browsing by default. Users can trigger the delivery checker when needed.
   const [deliveryGateOpen, setDeliveryGateOpen] = useState<boolean>(() => {
-    // Never block bots
     if (isSearchEngineCrawler()) return false;
-    // Don't show gate if already verified
     const stored = getStoredVerifiedLocation();
     if (stored && stored.verified) return false;
-    // If on admin path, don't open
     if (typeof window !== 'undefined' && window.location.pathname.startsWith('/admin')) {
       return false;
     }
-    return true;
+    return false;
   });
 
   const loadSettings = async () => {
@@ -92,7 +89,7 @@ export const DeliveryProvider: React.FC<{ children: React.ReactNode }> = ({ chil
           settings.storeLatitude,
           settings.storeLongitude
         );
-        const eligible = isWithinDeliveryRadius(dist, settings.radiusKm);
+        const eligible = settings.enabled && isWithinDeliveryRadius(dist, settings.radiusKm);
         const updated: VerifiedLocation = {
           ...stored,
           distanceKm: dist,

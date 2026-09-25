@@ -14,12 +14,14 @@ import {
   X,
 } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
+import { useDeliveryAvailability } from '../../context/DeliveryContext';
 import { useStore } from '../../context/StoreContext';
 import { WhatsAppIcon } from './WhatsAppIcon';
 import { safeExternalUrl } from '../../utils/urls';
 
 export const Header: React.FC = () => {
   const { totalQuantity } = useCart();
+  const { openDeliveryGate } = useDeliveryAvailability();
   const { settings, categories, homepageConfig } = useStore();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [categoriesOpen, setCategoriesOpen] = useState(false);
@@ -40,7 +42,7 @@ export const Header: React.FC = () => {
 
   const cleanWhatsAppNumber = settings.whatsappNumber.replace(/[^0-9]/g, '') || '919999517599';
   const directWhatsAppUrl = `https://wa.me/${cleanWhatsAppNumber}?text=${encodeURIComponent(
-    'Hi FNP Florist & Bakery Sector 76, I would like to inquire about products and same-day delivery.'
+    'Hi Cakes N More Sector 76, I would like to inquire about products and same-day delivery.'
   )}`;
 
   const deliveryPartners = [
@@ -89,7 +91,7 @@ export const Header: React.FC = () => {
             <div className="flex flex-col">
               <div className="flex items-center gap-2">
                 <span className="font-serif text-xl sm:text-2xl font-bold tracking-tight text-[#4A1525] group-hover:text-[#831843] transition-colors leading-none">
-                  FNP
+                  Cakes N More
                 </span>
                 <span
                   title="100% Vegetarian"
@@ -100,7 +102,7 @@ export const Header: React.FC = () => {
                 </span>
               </div>
               <span className="text-[10px] sm:text-[11px] uppercase tracking-wider text-[#78350F] font-semibold font-sans mt-0.5">
-                Florist &amp; Bakery
+                Bakery &amp; Florist
               </span>
               <span className="text-[9px] sm:text-[10px] text-gray-500 font-medium">
                 Sector 76, Noida
@@ -123,6 +125,14 @@ export const Header: React.FC = () => {
             >
               Home
             </Link>
+
+            <button
+              type="button"
+              onClick={openDeliveryGate}
+              className="px-3 py-2 text-sm font-medium rounded-lg text-gray-700 hover:text-[#831843] hover:bg-white/60 transition-colors"
+            >
+              Delivery Check
+            </button>
 
             <Link
               to="/shop"

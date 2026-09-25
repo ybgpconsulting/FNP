@@ -46,7 +46,7 @@ export const AdminSettingsPage: React.FC = () => {
 
   return (
     <div className="space-y-6">
-      <SEO title="Store Settings | FNP Admin" />
+      <SEO title="Store Settings | Cakes N More Admin" />
 
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 bg-white p-6 rounded-3xl border border-[#EADBDA] shadow-sm">
@@ -199,7 +199,7 @@ export const AdminSettingsPage: React.FC = () => {
                 type="url"
                 value={formData.instagramUrl || ''}
                 onChange={(e) => handleChange('instagramUrl', e.target.value)}
-                placeholder="https://instagram.com/fnp_noida76"
+                placeholder="https://instagram.com/cakesnmore_noida"
                 className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs"
               />
             </div>
@@ -212,7 +212,7 @@ export const AdminSettingsPage: React.FC = () => {
                 type="url"
                 value={formData.facebookUrl || ''}
                 onChange={(e) => handleChange('facebookUrl', e.target.value)}
-                placeholder="https://facebook.com/fnpnoida76"
+                placeholder="https://facebook.com/cakesnmore.noida"
                 className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs"
               />
             </div>
@@ -225,7 +225,7 @@ export const AdminSettingsPage: React.FC = () => {
                 type="url"
                 value={formData.twitterUrl || ''}
                 onChange={(e) => handleChange('twitterUrl', e.target.value)}
-                placeholder="https://x.com/fnpnoida76"
+                placeholder="https://x.com/cakesnmore_noida"
                 className="w-full px-3.5 py-2 bg-gray-50 border border-gray-200 rounded-xl text-xs"
               />
             </div>

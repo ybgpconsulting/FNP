@@ -11,7 +11,17 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   return response.json() as Promise<T>;
 }
 
-function normalizeStoreSettings(settings: StoreSettings): StoreSettings { return settings.mapsUrl === LEGACY_STORE_MAPS_URL ? { ...settings, mapsUrl: STORE_MAPS_URL } : settings; }
+function normalizeStoreSettings(settings: StoreSettings): StoreSettings {
+  const cleanWhatsAppNumber = settings.whatsappNumber.replace(/\D/g, '');
+  const whatsappNumber = /^\d{10,15}$/.test(cleanWhatsAppNumber)
+    ? cleanWhatsAppNumber
+    : INITIAL_SETTINGS.whatsappNumber;
+  return {
+    ...settings,
+    whatsappNumber,
+    ...(settings.mapsUrl === LEGACY_STORE_MAPS_URL ? { mapsUrl: STORE_MAPS_URL } : {}),
+  };
+}
 function readLocal<T>(key: string, fallback: T): T { try { const value = localStorage.getItem(key); return value ? JSON.parse(value) as T : fallback; } catch { return fallback; } }
 function writeLocal(key: string, value: unknown): void { localStorage.setItem(key, JSON.stringify(value)); }
 function normalizeProduct(product: Product): Product { const legacy = product as Product & { flavorOptions?: string[]; selectedFlavor?: string }; const { flavorOptions: _flavorOptions, selectedFlavor: _selectedFlavor, ...normalized } = legacy; return normalized; }

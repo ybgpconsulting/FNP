@@ -69,7 +69,7 @@ npm run build
 npm run dev:worker
 ```
 
-The Vite-only command (`npm run dev`) is still available for UI work and uses cached public data when the Worker API is not running. To use a separately hosted API, set `VITE_API_BASE_URL` in `.env`.
+The Vite-only command (`npm run dev`) is still available for UI work and uses cached public data when the Worker API is not running. To use a separately hosted API, set `VITE_API_BASE_URL` in `.env` and configure the Worker's `CORS_ORIGIN` variable with the exact frontend origin. Multiple origins may be comma-separated.
 
 ## Custom domain and verification
 

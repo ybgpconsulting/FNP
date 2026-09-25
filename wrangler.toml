@@ -19,6 +19,8 @@ bucket_name = "fnp-noida76-media"
 
 [vars]
 ADMIN_EMAIL = "admin@fnpnoida76.com"
+# Comma-separated frontend origins allowed to use credentialed cross-origin API requests.
+# CORS_ORIGIN = "https://your-store.example"
 
 # Set these with `wrangler secret put`, never in this file:
 # ADMIN_PASSWORD_HASH = "pbkdf2_sha256$100000$base64url-salt$base64url-hash"

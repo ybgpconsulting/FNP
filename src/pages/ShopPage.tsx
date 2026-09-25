@@ -86,7 +86,7 @@ export const ShopPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#FAF8F5] py-8 sm:py-12">
       <SEO
-        title="Shop Fresh Cakes, Flower Bouquets & Hampers | FNP Sector 76 Noida"
+        title="Shop Fresh Cakes, Flower Bouquets & Hampers | Cakes N More Sector 76 Noida"
         description="Browse our complete catalogue of freshly prepared celebration cakes, flower arrangements, indoor plants and luxury gifts in Sector 76, Noida with easy WhatsApp checkout."
       />
 

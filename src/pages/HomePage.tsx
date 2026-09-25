@@ -15,7 +15,7 @@ export const HomePage: React.FC = () => {
   const localBusinessSchema = {
     '@context': 'https://schema.org',
     '@type': ['Bakery', 'Florist', 'LocalBusiness'],
-    name: settings.businessName || 'FNP - Florist & Bakery in Noida Sector 76',
+    name: settings.businessName || 'Cakes N More',
     description: settings.metaDescription,
     telephone: settings.phone,
     address: {
@@ -31,7 +31,7 @@ export const HomePage: React.FC = () => {
       latitude: '28.5684',
       longitude: '77.3824',
     },
-    url: 'https://fnp-noida76.web.app',
+    url: 'https://cakesnmore-noida.web.app',
     openingHours: 'Mo-Su 09:00-23:00',
     priceRange: '₹₹',
   };
@@ -39,7 +39,7 @@ export const HomePage: React.FC = () => {
   return (
     <div>
       <SEO
-        title={settings.websiteTitle || 'FNP Florist & Bakery in Sector 76 Noida | Cakes, Flowers & Gifts'}
+        title={settings.websiteTitle || 'Cakes N More in Sector 76 Noida | Cakes, Flowers & Gifts'}
         description={settings.metaDescription}
         schema={localBusinessSchema}
       />

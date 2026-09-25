@@ -30,7 +30,9 @@ export const CartPage: React.FC = () => {
   const { settings } = useStore();
   const { verifiedLocation, deliverySettings, openDeliveryGate } = useDeliveryAvailability();
 
-  const isDeliveryVerified = Boolean(verifiedLocation && verifiedLocation.verified);
+  const isDeliveryVerified = Boolean(
+    deliverySettings.enabled && verifiedLocation && verifiedLocation.verified
+  );
 
   // Address fields per Requirement 16
   const [customerAddress, setCustomerAddress] = useState<CustomerDeliveryAddress>({
@@ -121,7 +123,7 @@ export const CartPage: React.FC = () => {
   if (cart.length === 0) {
     return (
       <div className="min-h-[70vh] bg-[#FAF8F5] flex flex-col items-center justify-center p-6 text-center">
-        <SEO title="Your Cart is Empty | FNP Sector 76 Noida" />
+        <SEO title="Your Cart is Empty | Cakes N More Sector 76 Noida" />
         <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-md border border-[#EADBDA] mb-4 text-[#831843]">
           <ShoppingBag className="w-10 h-10" />
         </div>
@@ -142,7 +144,7 @@ export const CartPage: React.FC = () => {
   return (
     <div className="min-h-screen bg-[#FAF8F5] pt-4 pb-28 sm:py-12">
       <SEO
-        title={`Review Order (${totalQuantity} items) | FNP Florist & Bakery Noida Sector 76`}
+        title={`Review Order (${totalQuantity} items) | Cakes N More Noida Sector 76`}
         description="Review your selected celebration cakes and flowers before WhatsApp confirmation. Fast delivery across Sector 76, Noida."
       />
 
@@ -296,7 +298,7 @@ export const CartPage: React.FC = () => {
                     </div>
                     <div className="text-xs text-gray-700">
                       Approximately{' '}
-                      <strong className="text-gray-900">{formatDistanceKm(verifiedLocation!.distanceKm)}</strong> from FNP Sector 76 Store (Within {deliverySettings.radiusKm} km limit).
+                      <strong className="text-gray-900">{formatDistanceKm(verifiedLocation!.distanceKm)}</strong> from Cakes N More Sector 76 Store (Within {deliverySettings.radiusKm} km limit).
                     </div>
                   </div>
                 </div>
@@ -428,7 +430,7 @@ export const CartPage: React.FC = () => {
                 </div>
               </div>
 
-              {/* City & State (Read-only defaults for Noida FNP) */}
+              {/* City & State (Read-only defaults for Sector 76, Noida) */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-gray-700 uppercase tracking-wider mb-1">

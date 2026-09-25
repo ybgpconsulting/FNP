@@ -22,7 +22,7 @@ export const Footer: React.FC = () => {
 
   const cleanWhatsAppNumber = settings.whatsappNumber.replace(/[^0-9]/g, '') || '919999517599';
   const whatsappUrl = `https://wa.me/${cleanWhatsAppNumber}?text=${encodeURIComponent(
-    'Hi, I would like to inquire about products at FNP Florist & Bakery, Sector 76 Noida.'
+    'Hi, I would like to inquire about products at Cakes N More, Sector 76 Noida.'
   )}`;
 
   return (
@@ -37,7 +37,7 @@ export const Footer: React.FC = () => {
               </div>
               <div>
                 <h3 className="font-serif text-2xl font-bold text-white tracking-tight leading-none">
-                  FNP Florist & Bakery
+                  Cakes N More
                 </h3>
                 <p className="text-xs text-[#E8A598] tracking-wider uppercase font-medium mt-1">
                   Sector 76, Noida • Uttar Pradesh
@@ -202,10 +202,15 @@ export const Footer: React.FC = () => {
 
         {/* Bottom Sub-bar */}
         <div className="pt-5 mt-5 border-t border-[#312527] flex flex-col sm:flex-row items-center justify-between text-xs text-[#8A797A] gap-3">
-          <p>© {currentYear} FNP Florist &amp; Bakery. All rights reserved. Sector 76, Noida, UP 201301.</p>
-          <div className="flex items-center gap-4">
+          <p>© {currentYear} Cakes N More. All rights reserved. Sector 76, Noida, UP 201301.</p>
+          <div className="flex flex-wrap items-center justify-center gap-3 sm:gap-4 text-[#D8C7C5]">
+            <Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link>
             <span className="text-gray-600">•</span>
-            <span>Easy WhatsApp Ordering</span>
+            <Link to="/terms-and-conditions" className="hover:text-white transition-colors">Terms</Link>
+            <span className="text-gray-600">•</span>
+            <Link to="/shipping-and-delivery" className="hover:text-white transition-colors">Shipping</Link>
+            <span className="text-gray-600">•</span>
+            <Link to="/returns-policy" className="hover:text-white transition-colors">Returns</Link>
           </div>
         </div>
       </div>

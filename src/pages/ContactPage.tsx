@@ -24,7 +24,7 @@ export const ContactPage: React.FC = () => {
 
   const handleInquirySubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    const text = `Hi FNP Florist & Bakery (Sector 76 Noida),
+    const text = `Hi Cakes N More (Sector 76 Noida),
 
 Inquiry Details:
 Name: ${inquiryName || 'Customer'}
@@ -42,8 +42,8 @@ Please let me know availability and pricing.`;
   return (
     <div className="min-h-screen bg-[#FAF8F5] py-12 sm:py-16">
       <SEO
-        title="Contact & Location | FNP Florist & Bakery Noida Sector 76"
-        description="Visit FNP Florist & Bakery at Shop 29, Ground Floor, Amrapali Crystal Home, Sector 76, Noida. Call +91 9999517599 for quick WhatsApp orders and same-day delivery."
+        title="Contact & Location | Cakes N More Noida Sector 76"
+        description="Visit Cakes N More at Shop 29, Ground Floor, Amrapali Crystal Home, Sector 76, Noida. Call +91 9999517599 for quick WhatsApp orders and same-day delivery."
       />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

@@ -16,6 +16,7 @@ interface Env {
   ADMIN_EMAIL: string;
   ADMIN_PASSWORD_HASH: string;
   SESSION_SECRET: string;
+  CORS_ORIGIN?: string;
 }
 
 type JsonObject = Record<string, unknown>;
@@ -76,7 +77,7 @@ function validateStore(value: unknown): StoreSettings | null {
   if (!isRecord(value) || !hasOnlyKeys(value, STORE_KEYS)) return null;
   const strings: Record<string, string | undefined> = {}; for (const key of STORE_KEYS) strings[key] = text(value[key], key === 'whatsappMessage' ? 5000 : 2000, ['zomatoUrl', 'swiggyUrl', 'magicpinUrl', 'logo'].includes(key) ? false : true);
   const urls = ['mapsUrl', 'instagramUrl', 'facebookUrl', 'twitterUrl', 'zomatoUrl', 'swiggyUrl', 'magicpinUrl', 'logo']; if (urls.some((key) => strings[key] && !urlValue(strings[key], key === 'mapsUrl'))) return null;
-  if (!strings.businessName || !strings.phone || !strings.whatsappNumber || !strings.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(strings.email) || !strings.address || !strings.mapsUrl || !strings.openingHours || !strings.whatsappMessage || !strings.websiteTitle || !strings.metaDescription || !strings.bannerAnnouncement) return null;
+  if (!strings.businessName || !strings.phone || !strings.whatsappNumber || !/^\d{10,15}$/.test(strings.whatsappNumber.replace(/\D/g, '')) || !strings.email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(strings.email) || !strings.address || !strings.mapsUrl || !strings.openingHours || !strings.whatsappMessage || !strings.websiteTitle || !strings.metaDescription || !strings.bannerAnnouncement) return null;
   return strings as unknown as StoreSettings;
 }
 
@@ -190,7 +191,26 @@ async function verifyPassword(password: string, stored: string): Promise<boolean
 }
 
 function sessionCookie(value: string, maxAge = SESSION_TTL_SECONDS): string {
-  return `${COOKIE_NAME}=${value}; Path=/; Max-Age=${maxAge}; Expires=${new Date(Date.now() + maxAge * 1000).toUTCString()}; HttpOnly; Secure; SameSite=Strict`;
+  return `${COOKIE_NAME}=${value}; Path=/; Max-Age=${maxAge}; Expires=${new Date(Date.now() + maxAge * 1000).toUTCString()}; HttpOnly; Secure; SameSite=None`;
+}
+
+function allowedOrigin(request: Request, env: Env): string | null {
+  const origin = request.headers.get('Origin');
+  if (!origin || !env.CORS_ORIGIN) return null;
+  const configuredOrigins = env.CORS_ORIGIN.split(',').map((value) => value.trim()).filter(Boolean);
+  return configuredOrigins.includes(origin) ? origin : null;
+}
+
+function withCors(response: Response, request: Request, env: Env): Response {
+  const origin = allowedOrigin(request, env);
+  if (!origin) return response;
+  const headers = new Headers(response.headers);
+  headers.set('Access-Control-Allow-Origin', origin);
+  headers.set('Access-Control-Allow-Credentials', 'true');
+  headers.set('Access-Control-Allow-Methods', 'GET,POST,PUT,DELETE,OPTIONS');
+  headers.set('Access-Control-Allow-Headers', 'Content-Type');
+  headers.append('Vary', 'Origin');
+  return new Response(response.body, { status: response.status, statusText: response.statusText, headers });
 }
 
 async function readJson<T>(request: Request): Promise<T> {
@@ -315,7 +335,14 @@ async function handleMedia(request: Request, env: Env, url: URL): Promise<Respon
 export default { async fetch(request: Request, env: Env): Promise<Response> {
   const url = new URL(request.url);
   try {
-    if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/media/')) return url.pathname.startsWith('/media/') || url.pathname === '/api/media' || url.pathname === '/api/media/upload' ? handleMedia(request, env, url) : handleApi(request, env, url);
+    if (url.pathname.startsWith('/api/') || url.pathname.startsWith('/media/')) {
+      if (request.method === 'OPTIONS') return withCors(new Response(null, { status: 204 }), request, env);
+      if (url.pathname.startsWith('/api/')) await seedIfEmpty(env);
+      const response = url.pathname.startsWith('/media/') || url.pathname === '/api/media' || url.pathname === '/api/media/upload'
+        ? await handleMedia(request, env, url)
+        : await handleApi(request, env, url);
+      return withCors(response, request, env);
+    }
     return env.ASSETS.fetch(request);
   } catch (err) { console.error(err); return error('Internal server error', 500); }
 } };

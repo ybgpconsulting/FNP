@@ -3,9 +3,16 @@ import { AdminUser } from '../types';
 const API_BASE = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
 const SESSION_KEY = 'fnp_noida76_admin_user_v1';
 
+class ApiRequestError extends Error {
+  constructor(public readonly status: number, message: string) {
+    super(message);
+    this.name = 'ApiRequestError';
+  }
+}
+
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
   const response = await fetch(`${API_BASE}/api/${path}`, { ...options, credentials: 'include', headers: { 'content-type': 'application/json', ...(options?.headers || {}) } });
-  if (!response.ok) { const payload = await response.json().catch(() => null) as { error?: string } | null; throw new Error(payload?.error || `Request failed (${response.status})`); }
+  if (!response.ok) { const payload = await response.json().catch(() => null) as { error?: string } | null; throw new ApiRequestError(response.status, payload?.error || `Request failed (${response.status})`); }
   return response.json() as Promise<T>;
 }
 
@@ -21,6 +28,14 @@ export async function resetAdminPassword(_email: string): Promise<void> { throw 
 export function getStoredAdminUser(): AdminUser | null { try { const raw = sessionStorage.getItem(SESSION_KEY); return raw ? JSON.parse(raw) as AdminUser : null; } catch { return null; } }
 
 export function subscribeToAuthChanges(callback: (user: AdminUser | null) => void): () => void {
-  request<{ user: AdminUser }>('auth/me').then((result) => { sessionStorage.setItem(SESSION_KEY, JSON.stringify(result.user)); callback(result.user); }).catch(() => { sessionStorage.removeItem(SESSION_KEY); callback(null); });
+  const cachedUser = getStoredAdminUser();
+  request<{ user: AdminUser }>('auth/me').then((result) => { sessionStorage.setItem(SESSION_KEY, JSON.stringify(result.user)); callback(result.user); }).catch((error) => {
+    if (cachedUser && (!(error instanceof ApiRequestError) || error.status >= 500)) {
+      callback(cachedUser);
+      return;
+    }
+    sessionStorage.removeItem(SESSION_KEY);
+    callback(null);
+  });
   return () => undefined;
 }
